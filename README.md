@@ -29,18 +29,24 @@ tail -f /var/log/app.log
 
 # Testing with curl
 ```bash
-# Create
-curl -X POST http://localhost:3000/reviews -H "Content-Type: application/json" -d '{"reviewText": "Love it!", "approved": false}'
+# list
+curl -XGET https://oilyourhair.com/api/reviews
+[{"_id":"688766bc764eebb390c89b6e","reviewText":"test","approved":false}]
 
-# List all
-curl http://localhost:3000/reviews
+# get
+curl -XGET https://oilyourhair.com/api/reviews/688766bc764eebb390c89b6e
+{"_id":"688766bc764eebb390c89b6e","reviewText":"testing2","approved":false}
 
-# Get by ID
-curl http://localhost:3000/reviews/<id>
+# add
+curl -XPOST -H "Content-Type: application/json"  https://oilyourhair.com/api/reviews -d '{"reviewText": "Love it!", "approved": false}'
+
+# list
+curl -XGET https://oilyourhair.com/api/reviews
+[{"_id":"6887675c764eebb390c89b70","reviewText":"testing2","approved":false},{"_id":"688767a1764eebb390c89b71","reviewText":"Love it!","approved":false}]
+
+# delete review
+curl -XDELETE https://oilyourhair.com/api/reviews/6887675c764eebb390c89b70
 
 # Update
-curl -X PUT http://localhost:3000/reviews/<id> -H "Content-Type: application/json" -d '{"approved": true}'
-
-# Delete
-curl -X DELETE http://localhost:3000/reviews/<id>
+curl -X PUT http://localhost:3000/api/reviews/688767a1764eebb390c89b71 -H "Content-Type: application/json" -d '{"approved": true}'
 ```
