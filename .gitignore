@@ -1,0 +1,54 @@
+# === Node.js backend ===
+node_modules/
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.*
+
+# === Logs ===
+logs/
+*.log
+*.log.*
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# === Runtime ===
+dist/
+build/
+.tmp/
+temp/
+
+# === Operating system ===
+.DS_Store
+Thumbs.db
+
+# === Editor/IDE files ===
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# === Tests / coverage ===
+coverage/
+*.lcov
+
+# === Frontend (React/Vite/Angular etc.) ===
+# (if frontend is part of the repo)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.*
+
+# === Misc ===
+*.swp
+*.bak
+*.tmp
+*.orig
