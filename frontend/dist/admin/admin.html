@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Reviews</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; }
+    textarea, input { width: 100%; margin-top: 0.5rem; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; }
+    .review { border-bottom: 1px solid #ccc; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+
+  <h1>📝 User Reviews</h1>
+
+  <form id="review-form">
+    <label for="reviewText">Write a review:</label><br/>
+    <textarea id="reviewText" rows="4" required></textarea><br/>
+    <label>
+      <input type="checkbox" id="approved" />
+      Approved
+    </label><br/>
+    <button type="submit">Submit Review</button>
+  </form>
+
+  <h2>📋 All Reviews</h2>
+  <div id="reviews"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
