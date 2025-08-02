@@ -12,7 +12,7 @@ function getReviewCollection() {
 async function getAllReviews() {
   const docs = await getReviewCollection().find().toArray();
   logger.info(`Fetched ${docs.length} reviews`);
-  logger.info('Reviews viewed successfulyy!');
+  logger.info('Reviews viewed successfully!');
   return docs.map(Review.fromMongo);
 }
 
