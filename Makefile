@@ -38,8 +38,12 @@ run:
 	node $(ENTRY)
 
 deploy:
+	@echo "🚀 Deploying ${APP_NAME} to local server..."
+	@echo "Running on port ${PORT}..."
+	rsync -avz --delete --exclude='node_modules' --exclude='.git' . /opt/app/
+
+deploy-to-remote:
 	@echo "🚀 Deploying ${APP_NAME}..."
-	@echo "Make sure to set environment variables for MONGO_URI and MONGO_DB."
 	rsync -avz --exclude='node_modules' --exclude='.git' . amijar-vm:/opt/app/
 
 test-api:

@@ -18,10 +18,16 @@
   <form id="review-form">
     <label for="reviewText">Write a review:</label><br/>
     <textarea id="reviewText" rows="4" required></textarea><br/>
+
+    <label for="rating">Rating (1-5):</label><br/>
+    <input type="number" id="rating" min="1" max="5" value="5" /><br/>
+
+    <label for="approved"></label>
     <label>
       <input type="checkbox" id="approved" />
       Approved
     </label><br/>
+
     <button type="submit">Submit Review</button>
   </form>
 

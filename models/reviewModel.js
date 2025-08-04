@@ -22,8 +22,8 @@ async function getReviewById(id) {
   return review ? Review.fromMongo(review) : null;
 }
 
-async function addReview(reviewText, approved = false) {
-  const review = new Review({ reviewText, approved });
+async function addReview(rating = 5, reviewText, approved = false) {
+  const review = new Review({rating, reviewText, approved });
   const result = await getReviewCollection().insertOne(review.toMongo());
   logger.info(`Added review with ID: ${result.insertedId}`);
   return new Review({ _id: result.insertedId, ...review });

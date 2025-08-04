@@ -13,6 +13,7 @@ async function loadReviews() {
   reviewsContainer.innerHTML = data.map(r => `
     <div class="review">
       <p><strong>ID:</strong> ${r._id}</p>
+      <p><strong>Rating:</strong> ${r.rating}</p>
       <p><strong>Text:</strong> ${r.reviewText}</p>
       <p><strong>Approved:</strong> ${r.approved}</p>
       <button onclick="approveReview('${r._id}')">✅ Approve</button>
@@ -23,13 +24,15 @@ async function loadReviews() {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  // Default to 3 If .value is falsy (meaning it’s an empty string "", null, undefined, or 0) 
+  const rating = document.getElementById('rating').value || 5;
   const reviewText = document.getElementById('reviewText').value;
   const approved = document.getElementById('approved').checked;
 
   await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ reviewText, approved })
+    body: JSON.stringify({ rating, reviewText, approved })
   });
 
   form.reset();
