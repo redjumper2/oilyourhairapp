@@ -11,8 +11,26 @@ server {
 
     # Serve static files
     location / {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires 0;
+
         try_files $uri $uri/ =404;
     }
+
+#    location ~* \.js$ {
+#        # Prevent aggressive caching
+#        add_header Cache-Control "no-cache, no-store, must-revalidate";
+#        add_header Pragma "no-cache";
+#        add_header Expires 0;
+#    }
+
+#    location ~* \.html$ {
+#        # Prevent aggressive caching
+#        add_header Cache-Control "no-cache, no-store, must-revalidate";
+#        add_header Pragma "no-cache";
+#        add_header Expires 0;
+#    }
 
     # Proxy API calls
     location /api/ {

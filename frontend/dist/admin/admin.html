@@ -4,18 +4,279 @@
   <meta charset="UTF-8">
   <title>User Reviews</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- <link rel="stylesheet" href="admin.css"> -->
   <style>
-    body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; }
+    /* body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; }
     textarea, input { width: 100%; margin-top: 0.5rem; }
-    button { margin-top: 1rem; padding: 0.5rem 1rem; }
-    .review { border-bottom: 1px solid #ccc; padding: 1rem 0; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; } */
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+    .review-placeholder {
+        text-align: center;
+        color: #a0aec0;
+        font-style: italic;
+        padding: 3rem;
+        background: rgba(160, 174, 192, 0.05);
+        border: 2px dashed #cbd5e0;
+        border-radius: 15px;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #e8f2e8;
+        min-height: 100vh;
+        padding: 2rem;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #4a7c59;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        background: linear-gradient(135deg, #4a7c59, #6b9d5a);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    h2 {
+        color: #4a7c59;
+        font-size: 1.8rem;
+        margin: 3rem 0 1.5rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid #4a7c59;
+        display: inline-block;
+    }
+
+    #review-form {
+        background: rgba(74, 124, 89, 0.05);
+        padding: 2rem;
+        border-radius: 15px;
+        border: 1px solid rgba(74, 124, 89, 0.2);
+        margin-bottom: 2rem;
+    }
+
+    label {
+        color: #2d3748;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    textarea, input[type="number"] {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        background: white;
+        margin-bottom: 1.5rem;
+    }
+
+    textarea:focus, input[type="number"]:focus {
+        outline: none;
+        border-color: #4a7c59;
+        box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+        transform: translateY(-2px);
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    input[type="number"] {
+        max-width: 150px;
+    }
+
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        gap: 0.5rem;
+    }
+
+    input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+        transform: scale(1.2);
+        accent-color: #4a7c59;
+    }
+
+    .checkbox-container label {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    button {
+        background: linear-gradient(135deg, #4a7c59, #6b9d5a);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin: 0.5rem;
+        min-width: 120px;
+        box-shadow: 0 4px 15px rgba(74, 124, 89, 0.3);
+    }
+
+    button[type="submit"] {
+        display: block;
+        margin: 2rem auto 0;
+        min-width: 150px;
+    }
+
+    button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(74, 124, 89, 0.4);
+    }
+
+    button:active {
+        transform: translateY(-1px);
+    }
+
+    /* Ensure buttons in reviews maintain proper display and don't interfere with JS */
+    .review button {
+        display: inline-block;
+        margin: 0.3rem 0.5rem 0 0;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        min-width: auto;
+    }
+
+    #reviews {
+        margin-top: 2rem;
+    }
+
+    .review {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .review::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(135deg, #4a7c59, #6b9d5a);
+    }
+
+    .review:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .review p {
+        margin-bottom: 0.8rem;
+        color: #2d3748;
+    }
+
+    .review p strong {
+        color: #4a7c59;
+    }
+
+    /* Remove responsive button changes that could interfere with JS functionality */
+    @media (max-width: 768px) {
+        body {
+        padding: 1rem;
+        }
+
+        .container {
+        padding: 2rem;
+        }
+
+        h1 {
+        font-size: 2rem;
+        }
+
+        h2 {
+        font-size: 1.5rem;
+        }
+
+        #review-form {
+        padding: 1.5rem;
+        }
+
+        .review {
+        padding: 1.5rem;
+        }
+    }
+
+    /* Animation for form elements */
+    @keyframes fadeInUp {
+        from {
+        opacity: 0;
+        transform: translateY(20px);
+        }
+        to {
+        opacity: 1;
+        transform: translateY(0);
+        }
+    }
+
+    #review-form, .review {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #4a7c59, #6b9d5a);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #3a6b47, #5a8c4a);
+    }
   </style>
 </head>
 <body>
 
-  <h1>📝 User Reviews</h1>
+  <h1>User Reviews</h1>
 
   <form id="review-form">
+    <label for="user">User:</label>
+    <input id="user" placeholder="Enter user name" required value="Anonymous"/><br/>
+
     <label for="reviewText">Write a review:</label><br/>
     <textarea id="reviewText" rows="4" required></textarea><br/>
 
