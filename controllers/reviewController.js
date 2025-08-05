@@ -24,11 +24,12 @@ async function fetchById(req, res) {
 }
 
 async function create(req, res) {
-  const { rating, reviewText, approved } = req.body;
+  const { user, rating, reviewText, approved } = req.body;
+
   if (typeof reviewText !== 'string') {
     return res.status(400).json({ error: 'reviewText is required and must be a string' });
   }
-  const review = await addReview(+rating, reviewText, !!approved);
+  const review = await addReview(`${user}`, +rating, reviewText, !!approved);
   res.status(201).json(review);
 }
 

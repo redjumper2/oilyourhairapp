@@ -14,7 +14,7 @@ async function connectToMongo() {
   const collection = db.collection('reviews');
   const count = await collection.countDocuments();
   if (count === 0) {
-    await collection.insertOne({ reviewText: 'First test review', approved: false });
+    await collection.insertOne({ user: 'test user', rating: 5, reviewText: 'First test review', approved: false });
   }
 }
 
