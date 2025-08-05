@@ -161,3 +161,15 @@ frontend-deploy:
 	sudo ln -sf /etc/nginx/sites-available/oilyourhair.com /etc/nginx/sites-enabled/
 	sudo nginx -t
 	sudo systemctl reload nginx
+
+frontend-passwd:
+	sudo apt install -y apache2-utils
+	sudo htpasswd -c /etc/nginx/.htpasswd oilyourhairadmin
+	# Enter password when prompted
+	sudo chown www-data:www-data /etc/nginx/.htpasswd
+
+	# to secure route, add:
+	# auth_basic "Restricted Access";
+	# auth_basic_user_file /etc/nginx/.htpasswd;
+	sudo nginx -t
+	sudo systemctl reload nginx

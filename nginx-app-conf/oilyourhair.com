@@ -32,6 +32,13 @@ server {
 #        add_header Expires 0;
 #    }
 
+    location /admin {
+        auth_basic "Restricted Access";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+
+    }
+
+
     # Proxy API calls
     location /api/ {
         proxy_pass http://localhost:3000/;
@@ -73,8 +80,5 @@ server {
 
     server_name oilyourhair.com www.oilyourhair.com;
     return 404; # managed by Certbot
-
-
-
 
 }
