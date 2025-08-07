@@ -1,6 +1,60 @@
 # Description
 An app for OilYourHair
 
+# Objective
+[o] Create a webstie that allows the brand, "oilyourhair.com" to showcase, sell, and market their product.
+
+# Product Roadmap
+
+
+Phase 1 (MVP):
+
+Goal: Get the brand pages out, get testimonials/reviews
+
+[x] main website pages html/css
+
+[x] admin/reviews crud backend
+
+[x] admin page for review approval
+
+[x] password protected for review approval
+
+[ ] implement crud for Account(s) (user)
+
+[ ] implement approved reviews page
+
+[ ] Take website live
+
+---
+Phase 2 (Manage Sales):
+
+[ ] product list backend with pricing
+
+[ ] shopping cart backend
+
+[ ] shopping cart frontend
+
+[ ] Inventory management
+
+---
+Phase 3 (Manage Marketing - internal):
+
+[ ] email creation templates for campaign
+
+[ ] email distribution for campaign
+
+---
+Phase 4 (Role management for full website mgmt):
+
+[ ] implement crud for Role(s)
+
+[ ] implement role control (3 roles - end user, admin, review moderator)
+
+[ ] implement google authN for Account authN/authZ with role(s)
+
+[ ] admin page - add more functionality - review approval, email creation using brand template, email distribution, promotions, discounts
+
+
 # Development stack
 MEN stack (MongoDB, Express, Node, Plain/Simple/Original html/js)
 
