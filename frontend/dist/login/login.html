@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .checkbox {
+      background-color: white;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .checkbox h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .account-form {
+      margin-bottom: 15px;
+    }
+
+    .account-form label {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .account-form input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .account-form input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .submit {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .submit:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+    <form id="account-form">
+
+        <label for="email">Email:</label>
+        <input id="email" placeholder="Enter email" required/><br/>
+
+        <label for="name">Name:</label>
+        <input id="name" placeholder="Enter name" required/><br/>
+
+        <button type="submit">Add Account</button>
+
+    </form>
+    
+    <div id="accounts"></div>
+  <script src="login.js"></script>
+</body>
+</html>

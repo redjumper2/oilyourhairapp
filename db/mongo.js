@@ -16,6 +16,12 @@ async function connectToMongo() {
   if (count === 0) {
     await collection.insertOne({ user: 'test user', rating: 5, reviewText: 'First test review', approved: false });
   }
+
+  const collection2 = db.collection('accounts');
+  const count2 = await collection.countDocuments();
+  if (count2 === 0) {
+    await collection2.insertOne({ email: 'example@gmail.com', name: 'test user' });
+  }
 }
 
 function getDb() {

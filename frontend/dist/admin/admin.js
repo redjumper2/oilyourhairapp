@@ -25,7 +25,7 @@ async function loadReviews() {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  // Default to 3 If .value is falsy (meaning it’s an empty string "", null, undefined, or 0) 
+  // Default to 5 If .value is falsy (meaning it’s an empty string "", null, undefined, or 0) 
   const user = document.getElementById('user').value || 'Anonymous';
   const rating = document.getElementById('rating').value || 5;
   const reviewText = document.getElementById('reviewText').value;

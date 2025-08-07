@@ -5,12 +5,14 @@ const port = process.env.PORT || 3000;
 const express = require('express');
 const { connectToMongo } = require('./db/mongo');
 const reviewRoutes = require('./routes/reviewRoutes');
+const accountRoutes = require('./routes/accountRoutes');
 const logger = require('./utils/logger');
 
 const app = express();
 
 app.use(express.json());
 app.use('/reviews', reviewRoutes);
+app.use('/account', accountRoutes);
 
 async function start() {
   try {
