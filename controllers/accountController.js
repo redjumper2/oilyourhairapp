@@ -29,6 +29,9 @@ async function createAccount(req, res) {
   if (typeof email !== 'string') {
     return res.status(400).json({ error: 'email is required and must be a string' });
   }
+  if (typeof name !== 'string') {
+    return res.status(400).json({ error: 'name is required and must be a string' });
+  }
   const account = await addAccount(`${email}`, `${name}`);
   res.status(201).json(account);
 }

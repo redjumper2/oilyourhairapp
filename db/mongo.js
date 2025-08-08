@@ -20,7 +20,7 @@ async function connectToMongo() {
   const collection2 = db.collection('accounts');
   const count2 = await collection.countDocuments();
   if (count2 === 0) {
-    await collection2.insertOne({ email: 'example@gmail.com', name: 'test user' });
+    await collection2.insertOne({ email: 'example@gmail.com', name: 'Test User' });
   }
 }
 

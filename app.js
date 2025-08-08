@@ -12,7 +12,7 @@ const app = express();
 
 app.use(express.json());
 app.use('/reviews', reviewRoutes);
-app.use('/account', accountRoutes);
+app.use('/accounts', accountRoutes);
 
 async function start() {
   try {

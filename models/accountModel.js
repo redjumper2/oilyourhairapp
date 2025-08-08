@@ -6,7 +6,7 @@ const Account = require('./account');
 const logger = require('../utils/logger');
 
 function getAccountCollection() {
-  return getDb().collection('account');
+  return getDb().collection('accounts');
 }
 
 async function getAllAccounts() {
