@@ -1,5 +1,4 @@
 // accountModel.js
-
 const { ObjectId } = require('mongodb');
 const { getDb } = require('../db/mongo');
 const Account = require('./account');
@@ -23,13 +22,28 @@ async function getAccountById(id) {
 }
 
 async function addAccount(email, name = 'Anonymous') {
-  const account = new Account({ email, name });
+  // Validation: reject empty, whitespace-only, or space-containing fields
+  if (!email || !email.trim() || /\s/.test(email)) {
+    throw new Error('Email cannot be empty or contain spaces');
+  }
+  if (!name || !name.trim() || /^\s+$/.test(name)) {
+    throw new Error('Name cannot be empty or only spaces');
+  }
+
+  const account = new Account({ email: email.trim(), name: name.trim() });
   const result = await getAccountCollection().insertOne(account.toMongo());
   logger.info(`Added account with ID: ${result.insertedId}`);
   return new Account({ _id: result.insertedId, ...account });
 }
 
 async function updateAccount(id, update) {
+  if (update.email && (!update.email.trim() || /\s/.test(update.email))) {
+    throw new Error('Email cannot be empty or contain spaces');
+  }
+  if (update.name && (!update.name.trim() || /^\s+$/.test(update.name))) {
+    throw new Error('Name cannot be empty or only spaces');
+  }
+
   const result = await getAccountCollection().findOneAndUpdate(
     { _id: new ObjectId(id) },
     { $set: update },

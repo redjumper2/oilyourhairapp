@@ -102,6 +102,8 @@ curl -XPOST -H "Content-Type: application/json"  http://localhost:3000/reviews -
 
 curl -XPOST -H "Content-Type: application/json"  https://oilyourhair.com/api/reviews -d '{"user":"test user", "rating": 5, "reviewText": "Love it!", "approved": false}'
 
+curl -XPOST -H "Content-Type: application/json"  https://oilyourhair.com/api/accounts -d '{"email":"example@gmail.com", "name": "Test User"}'
+
 # list - 
 curl -XGET https://localhost:3000/reviews
 [{"_id":"6887675c764eebb390c89b70","reviewText":"testing2","approved":false},{"_id":"688767a1764eebb390c89b71","reviewText":"Love it!","approved":false}]

@@ -1,8 +1,5 @@
-// login.js - Handles login-related actions for OilYourHair.com
-// http://yourdomain.com/ → Frontend
-// http://yourdomain.com/api/account → API
-
-const API_URL = '/api/account';
+// login.js — script for adding accounts
+const API_URL = '/api/accounts'; // change to your real accounts API endpoint
 const accountsContainer = document.getElementById('accounts');
 const form = document.getElementById('account-form');
 
@@ -10,26 +7,21 @@ async function loadAccounts() {
   const res = await fetch(API_URL);
   const data = await res.json();
 
-  accountsContainer.innerHTML = '';
-  data.forEach(renderAccount); // use the reusable function
-}
-
-function renderAccount(account) {
-  const div = document.createElement('div');
-  div.classList.add('account');
-  div.innerHTML = `
-    <p><strong>ID:</strong> ${account._id}</p>
-    <p><strong>Email:</strong> ${account.email}</p>
-    <p><strong>Name:</strong> ${account.name}</p>
-    <button onclick="deleteAccount('${account._id}', this)">🗑 Delete</button>
-  `;
-  accountsContainer.appendChild(div);
+  accountsContainer.innerHTML = data.map(acc => `
+    <div class="account">
+      <p><strong>ID:</strong> ${acc._id}</p>
+      <p><strong>Email:</strong> ${acc.email}</p>
+      <p><strong>Name:</strong> ${acc.name}</p>
+      <button onclick="deleteAccount('${acc._id}')">🗑 Delete</button>
+    </div>
+  `).join('');
 }
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const email = document.getElementById('email').value;
-  const name = document.getElementById('name').value || 'Anonymous';
+  const name = document.getElementById('name').value;
 
   await fetch(API_URL, {
     method: 'POST',
@@ -38,12 +30,12 @@ form.addEventListener('submit', async (e) => {
   });
 
   form.reset();
-  loadAccounts(); // Refresh list
+  loadAccounts();
 });
 
-async function deleteAccount(id, button) {
+async function deleteAccount(id) {
   await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-  loadAccounts(); // Refresh after deletion
+  loadAccounts();
 }
 
 // Initial load

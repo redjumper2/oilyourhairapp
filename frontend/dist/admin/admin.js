@@ -1,4 +1,4 @@
-// app.js - This is the main entry point for the OilYourHair.com App.
+// admin.js - This is the main entry point for the OilYourHair.com App.
 // http://yourdomain.com/ → Frontend
 // http://yourdomain.com/api/reviews → API
 
