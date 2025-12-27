@@ -5,12 +5,18 @@ PORT = 3000
 MONGO_URI = mongodb://localhost:27017
 MONGO_DB = myappdb
 
+# Include sites configuration
+include sites.conf
+
+# Include generic public site setup targets
+include pub-site-setup.mk
+
 # Default target
 .PHONY: help
 help:
 	@echo "📦 ${APP_NAME} Makefile"
 	@echo ""
-	@echo "Commands:"
+	@echo "Backend API Commands:"
 	@echo "  install        Install npm dependencies"
 	@echo "  run            Run the server"
 	@echo "  dev            Run with nodemon (if installed)"
@@ -18,10 +24,47 @@ help:
 	@echo "  mongo-stop     Stop MongoDB (macOS: brew only)"
 	@echo "  mongo-status   Show MongoDB status"
 	@echo "  test-api       Show test curl commands"
+	@echo ""
+	@echo "Public Site Commands:"
+	@echo "  oilyourhair-deploy       Deploy oilyourhair.com (nginx + html)"
+	@echo "  oilyourhair-conf-deploy  Deploy nginx config only"
+	@echo "  oilyourhair-html-deploy  Deploy HTML files only"
+	@echo "  oilyourhair-status       Check deployment status"
+	@echo "  oilyourhair-logs         View nginx logs"
+	@echo ""
+	@echo "Generic Site Commands (use SITE=domain.com):"
+	@echo "  make site-deploy SITE=example.com"
+	@echo "  make site-status SITE=example.com"
+	@echo ""
+	@echo "Cloudflare Tunnel Commands:"
+	@echo "  cloudflare-setup         Complete Cloudflare Tunnel setup"
+	@echo "  cloudflare-tunnel-status Check tunnel service status"
+	@echo "  cloudflare-tunnel-logs   View tunnel logs"
+
+#------------------------------------
+# GLOBAL INFRASTRUCTURE SETUP
+#------------------------------------
+nginx-install:
+	@$(MAKE) site-nginx-install
+
+#------------------------------------
+# ADMIN PASSWORD PROTECTION
+#------------------------------------
+frontend-passwd:
+	sudo apt install -y apache2-utils
+	sudo htpasswd -c /etc/nginx/.htpasswd oilyourhairadmin
+	# Enter password when prompted
+	sudo chown www-data:www-data /etc/nginx/.htpasswd
+
+	# to secure route, add:
+	# auth_basic "Restricted Access";
+	# auth_basic_user_file /etc/nginx/.htpasswd;
+	sudo nginx -t
+	sudo systemctl reload nginx
 
 
 #------------------------------------
-# use for development
+# use for typescript development
 install-dependencies:
 	@echo "📦 Installing dependencies..."
 	sudo apt purge nodejs npm -y
@@ -95,7 +138,7 @@ dev-mongo-status:
 
 
 #------------------------------------
-# USE ONLY ON LINUX VM
+# FOR APP SERVICE - USE ONLY ON LINUX VM
 mongo-install:
 	sudo apt update -y
 	sudo apt install -y mongodb
@@ -141,35 +184,109 @@ logger-setup:
 	sudo chown ${USER}:www-data /var/log/app.log
 	sudo chmod a+w /var/log/app.log
 
+
 #------------------------------------
-# use for production deployment
-# nginx and certbot installation and configuration
-nginx-install:
-	sudo apt update -y
-	sudo apt install nginx -y
+# SITE-SPECIFIC CONVENIENCE TARGETS
+# These wrap the generic targets from pub-site-setup.mk
+#------------------------------------
 
-certbot-install:
-	sudo apt install certbot python3-certbot-nginx -y
+# OilYourHair.com specific targets
+.PHONY: oilyourhair-deploy oilyourhair-conf-deploy oilyourhair-html-deploy
+.PHONY: oilyourhair-status oilyourhair-logs
 
-certbot-renew:
-	sudo certbot renew --nginx
-	sudo certbot --nginx -d oilyourhair.com -d oilyourhair.com
-	sudo systemctl status certbot.timer
+oilyourhair-deploy:
+	@$(MAKE) site-deploy SITE=$(OILYOURHAIR_SITE)
 
-frontend-deploy:
-	sudo cp nginx-app-conf/oilyourhair.com /etc/nginx/sites-available/oilyourhair.com
-	sudo ln -sf /etc/nginx/sites-available/oilyourhair.com /etc/nginx/sites-enabled/
-	sudo nginx -t
-	sudo systemctl reload nginx
+oilyourhair-conf-deploy:
+	@$(MAKE) site-conf-deploy SITE=$(OILYOURHAIR_SITE)
 
-frontend-passwd:
-	sudo apt install -y apache2-utils
-	sudo htpasswd -c /etc/nginx/.htpasswd oilyourhairadmin
-	# Enter password when prompted
-	sudo chown www-data:www-data /etc/nginx/.htpasswd
+oilyourhair-html-deploy:
+	@$(MAKE) site-html-deploy SITE=$(OILYOURHAIR_SITE)
 
-	# to secure route, add:
-	# auth_basic "Restricted Access";
-	# auth_basic_user_file /etc/nginx/.htpasswd;
-	sudo nginx -t
-	sudo systemctl reload nginx
+oilyourhair-status:
+	@$(MAKE) site-status SITE=$(OILYOURHAIR_SITE)
+
+oilyourhair-logs:
+	@$(MAKE) site-logs SITE=$(OILYOURHAIR_SITE)
+
+oilyourhair-tunnel-create:
+	@$(MAKE) site-tunnel-create SITE=$(OILYOURHAIR_SITE)
+
+oilyourhair-tunnel-config:
+	@$(MAKE) site-tunnel-config SITE=$(OILYOURHAIR_SITE)
+
+oilyourhair-tunnel-route:
+	@$(MAKE) site-tunnel-route SITE=$(OILYOURHAIR_SITE)
+
+oilyourhair-tunnel-test:
+	@$(MAKE) site-tunnel-test SITE=$(OILYOURHAIR_SITE)
+
+#------------------------------------
+# CLOUDFLARE TUNNEL GLOBAL SETUP
+#------------------------------------
+.PHONY: cloudflare-install cloudflare-login cloudflare-dns-credentials cloudflare-setup
+
+cloudflare-install:
+	@echo "📦 Installing cloudflared..."
+	wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+	sudo dpkg -i cloudflared-linux-amd64.deb
+	rm cloudflared-linux-amd64.deb
+	@echo "✅ cloudflared installed"
+
+cloudflare-login:
+	@echo "🔐 Logging into Cloudflare..."
+	cloudflared tunnel login
+	@echo "✅ Login complete"
+
+cloudflare-dns-credentials:
+	@echo "🔑 Setting up Cloudflare DNS credentials for certbot..."
+	@mkdir -p ~/.secrets
+	@read -p "Enter your Cloudflare API Token: " token; \
+	echo "dns_cloudflare_api_token = $$token" > ~/.secrets/cloudflare.ini
+	@chmod 600 ~/.secrets/cloudflare.ini
+	@echo "✅ Credentials saved to ~/.secrets/cloudflare.ini"
+
+cloudflare-setup:
+	@echo "🚀 Complete Cloudflare Tunnel Setup for $(OILYOURHAIR_SITE)"
+	@echo ""
+	@echo "Step 1: Install cloudflared"
+	@$(MAKE) cloudflare-install
+	@echo ""
+	@echo "Step 2: Login to Cloudflare"
+	@$(MAKE) cloudflare-login
+	@echo ""
+	@echo "Step 3: Create tunnel"
+	@$(MAKE) oilyourhair-tunnel-create
+	@echo ""
+	@echo "Step 4: Configure tunnel"
+	@$(MAKE) oilyourhair-tunnel-config
+	@echo ""
+	@echo "✅ Setup complete! Next steps:"
+	@echo "   1. Test tunnel: make oilyourhair-tunnel-test"
+	@echo "   2. Route DNS: make oilyourhair-tunnel-route"
+	@echo "   3. Install as service: make site-tunnel-service SITE=$(OILYOURHAIR_SITE)"
+
+cloudflare-tunnel-service:
+	@echo "🔧 Installing Cloudflare tunnel as systemd service..."
+	sudo cloudflared service install
+	sudo systemctl start cloudflared
+	sudo systemctl enable cloudflared
+	@echo "✅ Tunnel service installed and started"
+
+cloudflare-tunnel-status:
+	sudo systemctl status cloudflared
+
+cloudflare-tunnel-logs:
+	sudo journalctl -u cloudflared -f
+
+#------------------------------------
+# LEGACY TARGETS (kept for backwards compatibility)
+# Consider migrating to site-specific targets above
+#------------------------------------
+
+frontend-conf-deploy: oilyourhair-conf-deploy
+	@echo "⚠️  'frontend-conf-deploy' is deprecated, use 'oilyourhair-conf-deploy'"
+
+frontend-deploy: oilyourhair-html-deploy
+	@echo "⚠️  'frontend-deploy' is deprecated, use 'oilyourhair-html-deploy'"
+

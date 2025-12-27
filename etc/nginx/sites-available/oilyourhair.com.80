@@ -1,0 +1,12 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name oilyourhair.com www.oilyourhair.com;
+
+    root /var/www/oilyourhair.com;
+
+    # Certbot challenge
+    location /.well-known/acme-challenge/ {
+        root /var/www/oilyourhair.com;
+    }
+}
