@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+*.env
+!.env.example
+
+# Configuration
+config.yaml
+config.json
+
+# Build artifacts
+auth-module
+*.exe
+*.test
+*.out
+
+# Dependencies
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation
+*.md
+!README.md
+
+# Docker
+docker-compose.yml
+Dockerfile
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
