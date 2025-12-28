@@ -14,8 +14,14 @@ help:
 	@echo "Development:"
 	@echo "  make dev              Run server locally (requires MongoDB running)"
 	@echo "  make build            Build the binary"
-	@echo "  make test             Run tests"
+	@echo "  make test             Run Go tests"
 	@echo "  make clean            Clean build artifacts"
+	@echo ""
+	@echo "Testing:"
+	@echo "  make test-integration Run automated integration tests"
+	@echo "  make test-manual      View manual testing guide"
+	@echo "  make health           Check API health"
+	@echo "  make status           Show service status"
 	@echo ""
 	@echo "Docker:"
 	@echo "  make docker-build     Build Docker image"
@@ -180,6 +186,18 @@ setup:
 	@echo "  1. Edit .env with your settings (especially JWT_SECRET)"
 	@echo "  2. Run: make docker-up"
 	@echo "  3. Create a domain: make domain-create DOMAIN=example.com NAME=\"Example\" EMAIL=admin@example.com"
+
+#------------------------------------
+# Testing
+#------------------------------------
+
+test-integration:
+	@echo "🧪 Running integration tests..."
+	@./test.sh
+
+test-manual:
+	@echo "📖 Opening manual testing guide..."
+	@cat TESTING.md
 
 #------------------------------------
 # Health Checks
