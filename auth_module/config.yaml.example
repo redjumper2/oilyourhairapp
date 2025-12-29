@@ -1,7 +1,7 @@
 # Auth Module Configuration
 
 server:
-  port: 8080
+  port: 9090
   env: development
   host: 0.0.0.0
 
@@ -16,7 +16,7 @@ jwt:
 google:
   client_id: your-google-client-id
   client_secret: your-google-client-secret
-  callback_url: http://localhost:8080/auth/google/callback
+  callback_url: http://localhost:9090/auth/google/callback
 
 email:
   smtp:
@@ -36,5 +36,5 @@ invitation:
     promotional_expiry_hours: 720  # 30 days
 
 app:
-  url: http://localhost:8080
-  frontend_url: http://localhost:3000
+  url: http://localhost:9090
+  frontend_url: http://localhost:5173

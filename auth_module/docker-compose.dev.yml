@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: auth-module-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: auth_module
+    volumes:
+      - mongodb_data_dev:/data/db
+      - mongodb_config_dev:/data/configdb
+
+  # Optional: MongoDB admin interface (only for debugging)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: auth-module-mongo-express-dev
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    depends_on:
+      - mongodb
+    profiles:
+      - debug  # Only starts with: make dev-db-debug
+
+volumes:
+  mongodb_data_dev:
+    driver: local
+  mongodb_config_dev:
+    driver: local

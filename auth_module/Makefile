@@ -4,26 +4,37 @@
 
 # Variables
 APP_NAME = auth-module
-DOCKER_COMPOSE = docker-compose
+DOCKER_COMPOSE = docker compose
 GO = go
 
 # Default target
 help:
 	@echo "📦 Auth Module - Available Commands"
 	@echo ""
-	@echo "Development:"
-	@echo "  make dev              Run server locally (requires MongoDB running)"
+	@echo "Local Development (MongoDB in Docker, Code runs locally):"
+	@echo "  make dev              Start MongoDB + build + run server locally"
+	@echo "  make dev-db           Start only MongoDB in Docker"
+	@echo "  make dev-db-debug     Start MongoDB + Mongo Express web UI"
+	@echo "  make dev-db-down      Stop local MongoDB"
 	@echo "  make build            Build the binary"
-	@echo "  make test             Run Go tests"
+	@echo "  make run              Run the built binary with dev config"
+	@echo "  make deps             Download Go dependencies"
 	@echo "  make clean            Clean build artifacts"
+	@echo "  make clean-all        Clean everything including dev database"
 	@echo ""
 	@echo "Testing:"
+	@echo "  make test             Run Go tests"
 	@echo "  make test-integration Run automated integration tests"
 	@echo "  make test-manual      View manual testing guide"
 	@echo "  make health           Check API health"
 	@echo "  make status           Show service status"
 	@echo ""
-	@echo "Docker:"
+	@echo "Domain Management (Local):"
+	@echo "  make domain-create-local DOMAIN=example.com NAME=\"Example\" EMAIL=admin@example.com"
+	@echo "  make domain-list-local   List all domains"
+	@echo "  make domain-delete-local DOMAIN=example.com"
+	@echo ""
+	@echo "Full Docker (Everything in containers):"
 	@echo "  make docker-build     Build Docker image"
 	@echo "  make docker-up        Start all services (MongoDB + API)"
 	@echo "  make docker-down      Stop all services"
@@ -47,28 +58,68 @@ help:
 # Development (Local)
 #------------------------------------
 
+# Start only MongoDB in Docker for local development
+dev-db:
+	@echo "🗄️  Starting MongoDB for local development..."
+	docker compose -f docker-compose.dev.yml up -d mongodb
+	@echo "✅ MongoDB started on localhost:27017"
+	@echo "   Database: auth_module"
+
+# Start MongoDB + Mongo Express
+dev-db-debug:
+	@echo "🗄️  Starting MongoDB + Mongo Express..."
+	docker compose -f docker-compose.dev.yml --profile debug up -d
+	@echo "✅ MongoDB started on localhost:27017"
+	@echo "✅ Mongo Express available at http://localhost:8081 (admin/admin)"
+
+# Stop local dev MongoDB
+dev-db-down:
+	@echo "🛑 Stopping local dev MongoDB..."
+	docker compose -f docker-compose.dev.yml down
+
+# Build the binary
 build:
 	@echo "🔨 Building $(APP_NAME)..."
 	$(GO) build -o $(APP_NAME) .
-	@echo "✅ Build complete"
+	@echo "✅ Build complete: ./$(APP_NAME)"
 
+# Run Go tests
 test:
-	@echo "🧪 Running tests..."
+	@echo "🧪 Running Go tests..."
 	$(GO) test -v ./...
 
-dev: build
-	@echo "🚀 Starting development server..."
-	./$(APP_NAME) serve
-
+# Download dependencies
 deps:
 	@echo "📦 Downloading dependencies..."
 	$(GO) mod download
 	$(GO) mod tidy
+	@echo "✅ Dependencies ready"
 
+# Run locally (requires MongoDB running)
+run: build
+	@echo "🚀 Starting server locally with config.dev.yaml..."
+	./$(APP_NAME) serve --config=config.dev.yaml
+
+# Full local development workflow
+dev: dev-db-down dev-db
+	@echo "⏳ Waiting for MongoDB to start..."
+	@sleep 3
+	@echo "🔨 Building application..."
+	@$(MAKE) build
+	@echo "🚀 Starting server..."
+	@./$(APP_NAME) serve --config=config.dev.yaml
+
+# Clean build artifacts
 clean:
 	@echo "🧹 Cleaning build artifacts..."
 	rm -f $(APP_NAME)
 	rm -rf vendor/
+
+# Clean everything including dev database
+clean-all: clean dev-db-down
+	@echo "🗑️  Removing dev database volumes..."
+	docker compose -f docker-compose.dev.yml down -v
+	@echo "✅ All clean"
 
 #------------------------------------
 # Docker
@@ -134,7 +185,38 @@ docker-wait-healthy:
 	@timeout 60 sh -c 'until curl -sf http://localhost:8080/health > /dev/null 2>&1; do sleep 2; done' && echo "✅ API is ready"
 
 #------------------------------------
-# Domain Management (via Docker)
+# Domain Management (Local)
+#------------------------------------
+
+# Local domain management (uses local binary)
+domain-create-local:
+	@if [ -z "$(DOMAIN)" ] || [ -z "$(NAME)" ] || [ -z "$(EMAIL)" ]; then \
+		echo "❌ Error: DOMAIN, NAME, and EMAIL are required"; \
+		echo "Usage: make domain-create-local DOMAIN=example.com NAME=\"Example\" EMAIL=admin@example.com"; \
+		exit 1; \
+	fi
+	@echo "🌐 Creating domain: $(DOMAIN)"
+	@./$(APP_NAME) domain create \
+		--config=config.dev.yaml \
+		--domain=$(DOMAIN) \
+		--name="$(NAME)" \
+		--admin-email=$(EMAIL)
+
+domain-list-local:
+	@echo "📋 Listing domains..."
+	@./$(APP_NAME) domain list --config=config.dev.yaml
+
+domain-delete-local:
+	@if [ -z "$(DOMAIN)" ]; then \
+		echo "❌ Error: DOMAIN is required"; \
+		echo "Usage: make domain-delete-local DOMAIN=example.com"; \
+		exit 1; \
+	fi
+	@echo "⚠️  Deleting domain: $(DOMAIN)"
+	@./$(APP_NAME) domain delete --config=config.dev.yaml --domain=$(DOMAIN)
+
+#------------------------------------
+# Domain Management (Docker)
 #------------------------------------
 
 domain-create:

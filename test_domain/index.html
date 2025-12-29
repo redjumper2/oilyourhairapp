@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Domain - Premium Products</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🛍️ Test Domain Store</div>
+            <div class="auth-controls">
+                <span id="auth-status">Loading...</span>
+                <button id="login-btn" class="btn btn-primary" onclick="login()" style="display: none;">
+                    Login
+                </button>
+                <button id="logout-btn" class="btn btn-secondary" onclick="logout()" style="display: none;">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Welcome to Test Domain</h1>
+            <p>Premium products for testing multi-tenant authentication</p>
+            <div id="user-info" style="display: none; margin-top: 1rem;"></div>
+        </section>
+
+        <!-- Products Section -->
+        <section class="products-section">
+            <h2>Our Products</h2>
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <div class="product-image">🌿</div>
+                    <h3 class="product-name">Hair Growth Oil</h3>
+                    <p class="product-description">
+                        Premium blend of natural oils to promote healthy hair growth and shine.
+                    </p>
+                    <div class="login-to-view">
+                        🔒 Login to view price
+                    </div>
+                    <div class="product-price" style="display: none;">$29.99</div>
+                    <button class="buy-btn" onclick="buyProduct('Hair Growth Oil')">
+                        Add to Cart
+                    </button>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <div class="product-image">💈</div>
+                    <h3 class="product-name">Beard Care Set</h3>
+                    <p class="product-description">
+                        Complete beard care kit with oil, balm, and conditioning brush.
+                    </p>
+                    <div class="login-to-view">
+                        🔒 Login to view price
+                    </div>
+                    <div class="product-price" style="display: none;">$39.99</div>
+                    <button class="buy-btn" onclick="buyProduct('Beard Care Set')">
+                        Add to Cart
+                    </button>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <div class="product-image">✨</div>
+                    <h3 class="product-name">Skin Rejuvenation Serum</h3>
+                    <p class="product-description">
+                        Anti-aging serum with vitamin C and hyaluronic acid for radiant skin.
+                    </p>
+                    <div class="login-to-view">
+                        🔒 Login to view price
+                    </div>
+                    <div class="product-price" style="display: none;">$49.99</div>
+                    <button class="buy-btn" onclick="buyProduct('Skin Rejuvenation Serum')">
+                        Add to Cart
+                    </button>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card">
+                    <div class="product-image">🧴</div>
+                    <h3 class="product-name">Moisturizing Body Lotion</h3>
+                    <p class="product-description">
+                        Deeply hydrating lotion with shea butter and coconut oil for soft skin.
+                    </p>
+                    <div class="login-to-view">
+                        🔒 Login to view price
+                    </div>
+                    <div class="product-price" style="display: none;">$24.99</div>
+                    <button class="buy-btn" onclick="buyProduct('Moisturizing Body Lotion')">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Section -->
+        <section class="hero">
+            <h2>About This Demo</h2>
+            <p style="margin-bottom: 1rem;">
+                This is a test domain demonstrating multi-tenant authentication integration.
+            </p>
+            <p style="font-size: 0.9rem; color: #666;">
+                Click "Login" to authenticate via the auth portal, then you'll be redirected back here with a JWT token.
+                The token is stored in localStorage and used for all authenticated API calls.
+            </p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Test Domain. Built for testing multi-tenant authentication.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+            Domain: <strong>testdomain.com</strong> |
+            API: <strong>http://localhost:9090</strong> |
+            Auth Portal: <strong>http://localhost:5173</strong>
+        </p>
+    </footer>
+
+    <!-- Auth Script -->
+    <script src="/js/auth.js"></script>
+
+    <!-- Additional functionality -->
+    <script>
+        function buyProduct(productName) {
+            if (!isAuthenticated()) {
+                alert('Please login to purchase products');
+                login();
+                return;
+            }
+
+            alert(`Added "${productName}" to cart!\n\n(This is a demo - no actual purchase will be made)`);
+        }
+    </script>
+</body>
+</html>

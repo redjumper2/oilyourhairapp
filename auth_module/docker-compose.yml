@@ -27,10 +27,10 @@ services:
     container_name: auth-module-api
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "9090:9090"
     environment:
       # Server
-      AUTH_SERVER_PORT: "8080"
+      AUTH_SERVER_PORT: "9090"
       AUTH_SERVER_HOST: "0.0.0.0"
       AUTH_SERVER_ENV: "development"
 
@@ -45,7 +45,7 @@ services:
       # Google OAuth (optional, set in .env)
       AUTH_GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
       AUTH_GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
-      AUTH_GOOGLE_CALLBACK_URL: "${GOOGLE_CALLBACK_URL:-http://localhost:8080/auth/google/callback}"
+      AUTH_GOOGLE_CALLBACK_URL: "${GOOGLE_CALLBACK_URL:-http://localhost:9090/auth/google/callback}"
 
       # Email (configure for production)
       AUTH_EMAIL_SMTP_HOST: "${SMTP_HOST:-smtp.gmail.com}"
@@ -58,8 +58,8 @@ services:
       AUTH_MAGIC_LINK_EXPIRY_MINUTES: "15"
 
       # App URLs
-      AUTH_APP_URL: "${APP_URL:-http://localhost:8080}"
-      AUTH_APP_FRONTEND_URL: "${FRONTEND_URL:-http://localhost:3000}"
+      AUTH_APP_URL: "${APP_URL:-http://localhost:9090}"
+      AUTH_APP_FRONTEND_URL: "${FRONTEND_URL:-http://localhost:5173}"
     depends_on:
       mongodb:
         condition: service_healthy
@@ -68,7 +68,7 @@ services:
     volumes:
       - ./config.yaml:/root/config.yaml:ro  # Optional: mount custom config
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/health"]
       interval: 30s
       timeout: 5s
       retries: 3

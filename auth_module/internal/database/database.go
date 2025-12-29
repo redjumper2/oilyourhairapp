@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -70,7 +71,7 @@ func (db *DB) Disconnect() error {
 func (db *DB) createIndexes(ctx context.Context) error {
 	// Domains: unique index on domain
 	_, err := db.Domains.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    map[string]interface{}{"domain": 1},
+		Keys:    bson.D{{Key: "domain", Value: 1}},
 		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {
@@ -79,7 +80,7 @@ func (db *DB) createIndexes(ctx context.Context) error {
 
 	// Users: compound unique index on {email, domain}
 	_, err = db.Users.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    map[string]interface{}{"email": 1, "domain": 1},
+		Keys:    bson.D{{Key: "email", Value: 1}, {Key: "domain", Value: 1}},
 		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {
@@ -88,7 +89,7 @@ func (db *DB) createIndexes(ctx context.Context) error {
 
 	// Users: index on domain for queries
 	_, err = db.Users.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys: map[string]interface{}{"domain": 1},
+		Keys: bson.D{{Key: "domain", Value: 1}},
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create users domain index: %w", err)
@@ -96,7 +97,7 @@ func (db *DB) createIndexes(ctx context.Context) error {
 
 	// Invitations: unique index on token
 	_, err = db.Invitations.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    map[string]interface{}{"token": 1},
+		Keys:    bson.D{{Key: "token", Value: 1}},
 		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {
@@ -105,7 +106,7 @@ func (db *DB) createIndexes(ctx context.Context) error {
 
 	// Invitations: TTL index on expires_at for auto-deletion
 	_, err = db.Invitations.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    map[string]interface{}{"expires_at": 1},
+		Keys:    bson.D{{Key: "expires_at", Value: 1}},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	})
 	if err != nil {
@@ -114,7 +115,7 @@ func (db *DB) createIndexes(ctx context.Context) error {
 
 	// InvitationLogs: compound index on {invitation_id, user_email} to prevent duplicate claims
 	_, err = db.InvitationLogs.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    map[string]interface{}{"invitation_id": 1, "user_email": 1},
+		Keys:    bson.D{{Key: "invitation_id", Value: 1}, {Key: "user_email", Value: 1}},
 		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {
@@ -123,7 +124,7 @@ func (db *DB) createIndexes(ctx context.Context) error {
 
 	// MagicLinkTokens: unique index on token
 	_, err = db.MagicLinkTokens.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    map[string]interface{}{"token": 1},
+		Keys:    bson.D{{Key: "token", Value: 1}},
 		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {
@@ -132,7 +133,7 @@ func (db *DB) createIndexes(ctx context.Context) error {
 
 	// MagicLinkTokens: TTL index on expires_at for auto-deletion
 	_, err = db.MagicLinkTokens.Indexes().CreateOne(ctx, mongo.IndexModel{
-		Keys:    map[string]interface{}{"expires_at": 1},
+		Keys:    bson.D{{Key: "expires_at", Value: 1}},
 		Options: options.Index().SetExpireAfterSeconds(0),
 	})
 	if err != nil {

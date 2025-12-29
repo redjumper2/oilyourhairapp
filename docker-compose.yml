@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # Auth Module API (Backend)
+  auth-api:
+    build:
+      context: ./auth_module
+      dockerfile: Dockerfile
+    container_name: auth-api
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    environment:
+      # Server
+      AUTH_SERVER_PORT: "9090"
+      AUTH_SERVER_HOST: "0.0.0.0"
+      AUTH_SERVER_ENV: "development"
+
+      # MongoDB (use host network to connect to existing MongoDB)
+      AUTH_MONGODB_URI: "mongodb://host.docker.internal:27017"
+      AUTH_MONGODB_DATABASE: "auth_module"
+
+      # JWT
+      AUTH_JWT_SECRET: "${JWT_SECRET:-dev-secret-change-in-production}"
+      AUTH_JWT_EXPIRY_HOURS: "24"
+
+      # Google OAuth (optional)
+      AUTH_GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
+      AUTH_GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
+      AUTH_GOOGLE_CALLBACK_URL: "${GOOGLE_CALLBACK_URL:-http://localhost:9090/auth/google/callback}"
+
+      # Email
+      AUTH_EMAIL_SMTP_HOST: "${SMTP_HOST:-smtp.gmail.com}"
+      AUTH_EMAIL_SMTP_PORT: "${SMTP_PORT:-587}"
+      AUTH_EMAIL_SMTP_USER: "${SMTP_USER:-}"
+      AUTH_EMAIL_SMTP_PASSWORD: "${SMTP_PASSWORD:-}"
+      AUTH_EMAIL_FROM_ADDRESS: "${EMAIL_FROM:-noreply@example.com}"
+
+      # Magic link
+      AUTH_MAGIC_LINK_EXPIRY_MINUTES: "15"
+
+      # App URLs
+      AUTH_APP_URL: "http://localhost:9090"
+      AUTH_APP_FRONTEND_URL: "http://localhost:5173"
+    networks:
+      - auth-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Auth UI Module (Frontend)
+  auth-ui:
+    build:
+      context: ./auth_ui_module
+      dockerfile: Dockerfile
+    container_name: auth-ui
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: "http://localhost:9090/api/v1"
+    depends_on:
+      - auth-api
+    networks:
+      - auth-network
+    volumes:
+      # Mount source for hot-reload in development
+      - ./auth_ui_module/src:/app/src
+
+  # Test Domain (Sample Customer Site)
+  test-domain:
+    image: nginx:alpine
+    container_name: test-domain
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./test_domain:/usr/share/nginx/html:ro
+    networks:
+      - auth-network
+
+networks:
+  auth-network:
+    driver: bridge

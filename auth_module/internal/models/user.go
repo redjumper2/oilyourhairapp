@@ -27,35 +27,7 @@ func (u *User) IsDeleted() bool {
 }
 
 // GetPermissionsForRole returns default permissions for a role
+// Now uses the centralized permission registry from permissions.go
 func GetPermissionsForRole(role string) []string {
-	switch role {
-	case "admin":
-		return []string{
-			"domain.settings.read", "domain.settings.write",
-			"users.read", "users.write", "users.delete", "users.invite",
-			"products.read", "products.write",
-			"orders.read", "orders.write",
-			"inventory.read", "inventory.write",
-		}
-	case "editor":
-		return []string{
-			"products.read", "products.write",
-			"orders.read",
-			"inventory.read", "inventory.write",
-		}
-	case "viewer":
-		return []string{
-			"products.read",
-			"orders.read",
-			"inventory.read",
-		}
-	case "customer":
-		return []string{
-			"products.read",
-			"cart.read", "cart.write",
-			"orders.read",
-		}
-	default:
-		return []string{}
-	}
+	return PermissionsToStrings(GetPermissionsForRoleTyped(role))
 }

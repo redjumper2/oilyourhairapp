@@ -10,6 +10,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
+	"github.com/sparque/auth_module/config"
 	"github.com/sparque/auth_module/internal/database"
 	"github.com/sparque/auth_module/internal/handlers"
 	"github.com/sparque/auth_module/internal/middleware"
@@ -136,6 +137,10 @@ func setupRoutes(e *echo.Echo, db *database.DB, cfg *config.Config) {
 	admin.POST("/users/invite", adminHandler.InviteUser)
 	admin.PUT("/users/:id", adminHandler.UpdateUser)
 	admin.DELETE("/users/:id", adminHandler.DeleteUser)
+
+	// Permissions
+	admin.GET("/permissions", adminHandler.GetPermissions)
+	admin.GET("/permissions/roles", adminHandler.GetRolePermissions)
 
 	log.Println("✅ Routes configured")
 }

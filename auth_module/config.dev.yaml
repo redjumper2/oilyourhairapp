@@ -1,0 +1,40 @@
+# Local Development Configuration
+
+server:
+  port: 9090
+  env: development
+  host: 0.0.0.0
+
+mongodb:
+  uri: mongodb://localhost:27017
+  database: auth_module
+
+jwt:
+  secret: dev-secret-key-for-local-testing-only
+  expiry_hours: 24
+
+google:
+  client_id: ""  # Set via environment: AUTH_GOOGLE_CLIENT_ID
+  client_secret: ""  # Set via environment: AUTH_GOOGLE_CLIENT_SECRET
+  callback_url: http://localhost:8080/api/v1/auth/google/callback
+
+email:
+  smtp:
+    host: smtp.gmail.com
+    port: 587
+    user: ""  # Set via environment: AUTH_EMAIL_SMTP_USER
+    password: ""  # Set via environment: AUTH_EMAIL_SMTP_PASSWORD
+  from_address: noreply@localhost
+
+magic_link:
+  expiry_minutes: 15
+
+invitation:
+  defaults:
+    email_expiry_hours: 24
+    qr_code_expiry_hours: 72
+    promotional_expiry_hours: 720  # 30 days
+
+app:
+  url: http://localhost:8080
+  frontend_url: http://localhost:3000

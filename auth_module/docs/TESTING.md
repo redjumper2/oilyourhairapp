@@ -421,6 +421,88 @@ Try to delete yourself:
 # Should fail with: "Cannot delete yourself"
 ```
 
+### Get All Permissions
+
+View all available permissions grouped by category:
+
+```bash
+curl http://localhost:8080/api/v1/admin/permissions \
+  -H "Authorization: Bearer $ADMIN_JWT" \
+  -H "Host: testdomain.com" | jq
+
+# Expected:
+# {
+#   "groups": [
+#     {
+#       "name": "Domain Management",
+#       "description": "Manage domain settings and branding",
+#       "permissions": ["domain.settings.read", "domain.settings.write"]
+#     },
+#     {
+#       "name": "User Management",
+#       "description": "Manage users, roles, and invitations",
+#       "permissions": ["users.read", "users.write", "users.delete", "users.invite"]
+#     },
+#     ...
+#   ],
+#   "total": 16
+# }
+```
+
+**Use case:** Build a frontend permission selector with these grouped permissions.
+
+### Get Permissions by Role
+
+View what permissions each role has:
+
+```bash
+curl http://localhost:8080/api/v1/admin/permissions/roles \
+  -H "Authorization: Bearer $ADMIN_JWT" \
+  -H "Host: testdomain.com" | jq
+
+# Expected:
+# {
+#   "admin": {
+#     "count": 12,
+#     "permissions": ["domain.settings.read", "domain.settings.write", ...]
+#   },
+#   "editor": {
+#     "count": 5,
+#     "permissions": ["products.read", "products.write", ...]
+#   },
+#   "viewer": {
+#     "count": 3,
+#     "permissions": ["products.read", "orders.read", "inventory.read"]
+#   },
+#   "customer": {
+#     "count": 4,
+#     "permissions": ["products.read", "cart.read", "cart.write", "orders.read"]
+#   }
+# }
+```
+
+**Use case:** Display role comparison table in admin UI.
+
+### Create Invitation with Custom Permissions
+
+Override default role permissions with custom selection:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/admin/users/invite \
+  -H "Authorization: Bearer $ADMIN_JWT" \
+  -H "Host: testdomain.com" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "custom@testdomain.com",
+    "role": "viewer",
+    "type": "email_with_qr",
+    "permissions": ["products.read", "products.write", "orders.read"]
+  }' | jq
+
+# Expected: Invitation created with custom permissions
+# User will have products.write even though "viewer" role normally doesn't
+```
+
 ## Part 7: Test Google OAuth (Optional)
 
 If you've configured Google OAuth (see `GOOGLE_OAUTH_SETUP.md`):

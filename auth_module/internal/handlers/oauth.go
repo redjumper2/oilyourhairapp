@@ -8,7 +8,6 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
-	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/sparque/auth_module/config"
 	"github.com/sparque/auth_module/internal/database"

@@ -6,6 +6,37 @@ All API requests to protected endpoints must include domain context via `Host` h
 
 ---
 
+## API Endpoints Summary
+
+### Authentication Endpoints (Public)
+
+- `POST /auth/magic-link/request` - Request a magic link email for passwordless login
+- `GET /auth/magic-link/verify` - Verify magic link token and receive JWT
+- `GET /auth/invitation/verify` - Check invitation validity and get details
+- `POST /auth/invitation/accept` - Accept invitation and create user account
+- `GET /auth/google` - Initiate Google OAuth login flow
+- `GET /auth/google/callback` - Handle Google OAuth callback (browser redirect)
+- `GET /auth/google/callback/json` - Handle Google OAuth callback (JSON response)
+- `GET /auth/me` - Get current authenticated user information (requires JWT)
+
+### Admin Endpoints (Protected - Admin Only)
+
+**Domain Settings**
+- `GET /admin/domain/settings` - Get domain settings and branding
+- `PUT /admin/domain/settings` - Update domain settings and branding
+
+**User Management**
+- `GET /admin/users` - List all users in domain (optional role filter)
+- `POST /admin/users/invite` - Create user invitation with QR code
+- `PUT /admin/users/:id` - Update user role and permissions
+- `DELETE /admin/users/:id` - Soft delete a user
+
+**Permissions**
+- `GET /admin/permissions` - Get all available permissions grouped by category
+- `GET /admin/permissions/roles` - Get permissions for each role
+
+---
+
 ## Authentication Endpoints
 
 ### Request Magic Link
@@ -359,6 +390,143 @@ Soft delete a user (cannot delete yourself or last admin).
   "message": "User deleted successfully"
 }
 ```
+
+---
+
+### Get All Permissions
+
+Get all available permissions grouped by category.
+
+**Endpoint:** `GET /admin/permissions`
+
+**Headers:**
+- `Authorization: Bearer <jwt-token>`
+- `Host: <domain>`
+
+**Response:** `200 OK`
+```json
+{
+  "groups": [
+    {
+      "name": "Domain Management",
+      "description": "Manage domain settings and branding",
+      "permissions": [
+        "domain.settings.read",
+        "domain.settings.write"
+      ]
+    },
+    {
+      "name": "User Management",
+      "description": "Manage users, roles, and invitations",
+      "permissions": [
+        "users.read",
+        "users.write",
+        "users.delete",
+        "users.invite"
+      ]
+    },
+    {
+      "name": "Product Management",
+      "description": "Manage product catalog",
+      "permissions": [
+        "products.read",
+        "products.write"
+      ]
+    },
+    {
+      "name": "Order Management",
+      "description": "View and manage orders",
+      "permissions": [
+        "orders.read",
+        "orders.write"
+      ]
+    },
+    {
+      "name": "Inventory Management",
+      "description": "Manage stock and inventory",
+      "permissions": [
+        "inventory.read",
+        "inventory.write"
+      ]
+    },
+    {
+      "name": "Shopping Cart",
+      "description": "Customer shopping cart operations",
+      "permissions": [
+        "cart.read",
+        "cart.write"
+      ]
+    }
+  ],
+  "total": 16
+}
+```
+
+**Use case:** Build permission selector UI in admin panel.
+
+---
+
+### Get Permissions by Role
+
+Get permissions for each role.
+
+**Endpoint:** `GET /admin/permissions/roles`
+
+**Headers:**
+- `Authorization: Bearer <jwt-token>`
+- `Host: <domain>`
+
+**Response:** `200 OK`
+```json
+{
+  "admin": {
+    "count": 12,
+    "permissions": [
+      "domain.settings.read",
+      "domain.settings.write",
+      "users.read",
+      "users.write",
+      "users.delete",
+      "users.invite",
+      "products.read",
+      "products.write",
+      "orders.read",
+      "orders.write",
+      "inventory.read",
+      "inventory.write"
+    ]
+  },
+  "editor": {
+    "count": 5,
+    "permissions": [
+      "products.read",
+      "products.write",
+      "orders.read",
+      "inventory.read",
+      "inventory.write"
+    ]
+  },
+  "viewer": {
+    "count": 3,
+    "permissions": [
+      "products.read",
+      "orders.read",
+      "inventory.read"
+    ]
+  },
+  "customer": {
+    "count": 4,
+    "permissions": [
+      "products.read",
+      "cart.read",
+      "cart.write",
+      "orders.read"
+    ]
+  }
+}
+```
+
+**Use case:** Display role comparison table in admin UI.
 
 ---
 

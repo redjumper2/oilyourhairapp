@@ -404,3 +404,47 @@ func (h *AdminHandler) DeleteUser(c echo.Context) error {
 		"message": "User deleted successfully",
 	})
 }
+
+// GetPermissions handles GET /admin/permissions
+func (h *AdminHandler) GetPermissions(c echo.Context) error {
+	groups := models.AllPermissionGroups()
+
+	// Format response
+	response := make([]map[string]interface{}, len(groups))
+	for i, group := range groups {
+		perms := make([]string, len(group.Permissions))
+		for j, p := range group.Permissions {
+			perms[j] = string(p)
+		}
+		response[i] = map[string]interface{}{
+			"name":        group.Name,
+			"description": group.Description,
+			"permissions": perms,
+		}
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"groups": response,
+		"total":  len(models.AllPermissions()),
+	})
+}
+
+// GetRolePermissions handles GET /admin/permissions/roles
+func (h *AdminHandler) GetRolePermissions(c echo.Context) error {
+	rolePerms := models.PermissionsByRole()
+
+	// Format response
+	response := make(map[string]interface{})
+	for role, perms := range rolePerms {
+		permStrings := make([]string, len(perms))
+		for i, p := range perms {
+			permStrings[i] = string(p)
+		}
+		response[role] = map[string]interface{}{
+			"permissions": permStrings,
+			"count":       len(permStrings),
+		}
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
