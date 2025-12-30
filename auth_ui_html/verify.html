@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifying...</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center">
+                <div class="spinner"></div>
+                <p style="color: #6b7280;">Verifying magic link...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden">
+                <div class="alert alert-error">
+                    <h3 style="margin-bottom: 0.5rem;">Verification Failed</h3>
+                    <p id="error-message"></p>
+                </div>
+                <button onclick="window.location.href='/login'" class="btn btn-primary" style="margin-top: 1rem;">
+                    Back to Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get token from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        console.log('🔍 Verify page loaded');
+        console.log('   Token:', token);
+
+        const apiUrl = 'https://api.oilyourhair.com/api/v1';
+
+        async function verifyMagicLink() {
+            if (!token) {
+                showError('Missing verification token');
+                return;
+            }
+
+            try {
+                // Call backend to verify token
+                const response = await fetch(`${apiUrl}/auth/magic-link/verify?token=${encodeURIComponent(token)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({ error: 'Verification failed' }));
+                    throw new Error(error.error || `HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Verification successful:', data);
+
+                // Get user info to determine redirect domain
+                const user = data.user;
+                const jwtToken = data.token;
+
+                // Redirect to user's domain with token in hash
+                const redirectUrl = `https://${user.domain}#token=${jwtToken}`;
+                console.log('🔄 Redirecting to:', redirectUrl);
+                window.location.href = redirectUrl;
+
+            } catch (error) {
+                console.error('❌ Verification error:', error);
+                showError(error.message || 'Failed to verify magic link');
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-state').classList.remove('hidden');
+        }
+
+        // Start verification
+        verifyMagicLink();
+    </script>
+</body>
+</html>

@@ -9,14 +9,14 @@ import (
 )
 
 type Config struct {
-	Server     ServerConfig
-	MongoDB    MongoDBConfig
-	JWT        JWTConfig
-	Google     GoogleOAuthConfig
-	Email      EmailConfig
-	MagicLink  MagicLinkConfig
-	Invitation InvitationConfig
-	App        AppConfig
+	Server     ServerConfig      `mapstructure:"server"`
+	MongoDB    MongoDBConfig     `mapstructure:"mongodb"`
+	JWT        JWTConfig         `mapstructure:"jwt"`
+	Google     GoogleOAuthConfig `mapstructure:"google"`
+	Email      EmailConfig       `mapstructure:"email"`
+	MagicLink  MagicLinkConfig   `mapstructure:"magic_link"`
+	Invitation InvitationConfig  `mapstructure:"invitation"`
+	App        AppConfig         `mapstructure:"app"`
 }
 
 type ServerConfig struct {
@@ -101,6 +101,9 @@ func Load(configPath string) (*Config, error) {
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
+	// Explicitly bind critical environment variables
+	v.BindEnv("magic_link.expiry_minutes", "AUTH_MAGIC_LINK_EXPIRY_MINUTES")
+
 	// Set defaults
 	setDefaults(v)
 
@@ -109,6 +112,11 @@ func Load(configPath string) (*Config, error) {
 	if err := v.Unmarshal(&cfg); err != nil {
 		return nil, fmt.Errorf("error unmarshaling config: %w", err)
 	}
+
+	// Debug logging
+	log.Printf("🔧 Config loaded:")
+	log.Printf("   magic_link.expiry_minutes from viper: %v", v.Get("magic_link.expiry_minutes"))
+	log.Printf("   MagicLink.ExpiryMinutes in struct: %d", cfg.MagicLink.ExpiryMinutes)
 
 	return &cfg, nil
 }

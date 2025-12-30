@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/sparque/auth_module/config"
@@ -45,12 +46,20 @@ func (s *AuthService) RequestMagicLink(ctx context.Context, email, domain string
 	}
 
 	// Create magic link token
+	expiryDuration := time.Duration(s.cfg.MagicLink.ExpiryMinutes) * time.Minute
+	expiresAt := time.Now().Add(expiryDuration)
+
+	log.Printf("🔑 Creating magic link token:")
+	log.Printf("   ExpiryMinutes config: %d", s.cfg.MagicLink.ExpiryMinutes)
+	log.Printf("   ExpiryDuration: %v", expiryDuration)
+	log.Printf("   ExpiresAt: %v", expiresAt)
+
 	magicLink := models.MagicLinkToken{
 		ID:        primitive.NewObjectID(),
 		Email:     email,
 		Domain:    domain,
 		Token:     token,
-		ExpiresAt: time.Now().Add(time.Duration(s.cfg.MagicLink.ExpiryMinutes) * time.Minute),
+		ExpiresAt: expiresAt,
 		CreatedAt: time.Now(),
 	}
 

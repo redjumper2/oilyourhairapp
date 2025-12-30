@@ -30,6 +30,11 @@ RUN echo 'server { \
         rewrite ^ /invite.html break; \
     } \
     \
+    # Rewrite /auth/verify to /verify.html (preserve query string) \
+    location = /auth/verify { \
+        rewrite ^ /verify.html break; \
+    } \
+    \
     # CORS headers for API calls \
     add_header Access-Control-Allow-Origin * always; \
 }' > /etc/nginx/conf.d/default.conf
