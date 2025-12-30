@@ -15,6 +15,7 @@
 		// Build OAuth URL with domain and redirect params
 		const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
 		const params = new URLSearchParams();
+		params.set('domain', domain);
 		if (redirectUrl) params.set('redirect', redirectUrl);
 
 		// Redirect to backend Google OAuth endpoint

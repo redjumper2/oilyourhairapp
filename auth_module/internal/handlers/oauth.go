@@ -43,8 +43,11 @@ func NewOAuthHandler(db *database.DB, cfg *config.Config) *OAuthHandler {
 
 // GoogleLogin initiates Google OAuth flow
 func (h *OAuthHandler) GoogleLogin(c echo.Context) error {
-	// Extract domain from Host header
-	domain := extractDomain(c.Request().Host)
+	// Extract domain from query param first, fallback to Host header
+	domain := c.QueryParam("domain")
+	if domain == "" {
+		domain = extractDomain(c.Request().Host)
+	}
 
 	// Verify domain exists
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 5*time.Second)
@@ -58,9 +61,15 @@ func (h *OAuthHandler) GoogleLogin(c echo.Context) error {
 		})
 	}
 
-	// Store domain in session for callback
+	// Store domain and redirect URL in session for callback
+	redirectURL := c.QueryParam("redirect")
+	if redirectURL == "" {
+		redirectURL = fmt.Sprintf("https://%s", domain)
+	}
+
 	session, _ := h.store.Get(c.Request(), "auth-session")
 	session.Values["domain"] = domain
+	session.Values["redirect"] = redirectURL
 	session.Save(c.Request(), c.Response())
 
 	// Use gothic to handle the OAuth flow
@@ -68,8 +77,10 @@ func (h *OAuthHandler) GoogleLogin(c echo.Context) error {
 	req := c.Request()
 	res := c.Response().Writer
 
-	// Set provider to google
-	req.URL.Query().Set("provider", "google")
+	// Set provider to google by modifying URL query parameters
+	q := req.URL.Query()
+	q.Set("provider", "google")
+	req.URL.RawQuery = q.Encode()
 
 	// Initiate OAuth
 	gothic.BeginAuthHandler(res, req)
@@ -79,13 +90,18 @@ func (h *OAuthHandler) GoogleLogin(c echo.Context) error {
 
 // GoogleCallback handles Google OAuth callback
 func (h *OAuthHandler) GoogleCallback(c echo.Context) error {
-	// Get domain from session
+	// Get domain and redirect URL from session
 	session, _ := h.store.Get(c.Request(), "auth-session")
 	domain, ok := session.Values["domain"].(string)
 	if !ok || domain == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "Domain not found in session",
 		})
+	}
+
+	redirectURL, _ := session.Values["redirect"].(string)
+	if redirectURL == "" {
+		redirectURL = fmt.Sprintf("https://%s", domain)
 	}
 
 	// Complete OAuth with gothic
@@ -109,13 +125,13 @@ func (h *OAuthHandler) GoogleCallback(c echo.Context) error {
 
 	// Clear session
 	session.Values["domain"] = nil
+	session.Values["redirect"] = nil
 	session.Save(req, res)
 
-	// Return JWT or redirect to frontend with token
-	frontendURL := h.cfg.App.FrontendURL
-	redirectURL := fmt.Sprintf("%s/auth/callback?token=%s", frontendURL, jwt)
+	// Redirect to customer domain with token in hash (for SPA compatibility)
+	finalRedirect := fmt.Sprintf("%s#token=%s", redirectURL, jwt)
 
-	return c.Redirect(http.StatusTemporaryRedirect, redirectURL)
+	return c.Redirect(http.StatusTemporaryRedirect, finalRedirect)
 }
 
 // GoogleCallbackJSON handles Google OAuth callback and returns JSON (for API clients)

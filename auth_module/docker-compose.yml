@@ -1,24 +1,23 @@
-version: '3.8'
-
 services:
-  mongodb:
-    image: mongo:7.0
-    container_name: auth-module-mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: auth_module
-    volumes:
-      - mongodb_data:/data/db
-      - mongodb_config:/data/configdb
-    networks:
-      - auth-network
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/auth_module --quiet
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # mongodb:
+  #   image: mongo:7.0
+  #   container_name: auth-module-mongodb
+  #   restart: unless-stopped
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     MONGO_INITDB_DATABASE: auth_module
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #     - mongodb_config:/data/configdb
+  #   networks:
+  #     - auth-network
+  #   healthcheck:
+  #     test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/auth_module --quiet
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  # Using host MongoDB on port 27017 instead
 
   auth-module:
     build:
@@ -26,16 +25,15 @@ services:
       dockerfile: Dockerfile
     container_name: auth-module-api
     restart: unless-stopped
-    ports:
-      - "9090:9090"
+    network_mode: "host"
     environment:
       # Server
       AUTH_SERVER_PORT: "9090"
       AUTH_SERVER_HOST: "0.0.0.0"
       AUTH_SERVER_ENV: "development"
 
-      # MongoDB
-      AUTH_MONGODB_URI: "mongodb://mongodb:27017"
+      # MongoDB (connecting to host MongoDB via host network)
+      AUTH_MONGODB_URI: "mongodb://localhost:27017"
       AUTH_MONGODB_DATABASE: "auth_module"
 
       # JWT (CHANGE IN PRODUCTION!)
@@ -60,11 +58,6 @@ services:
       # App URLs
       AUTH_APP_URL: "${APP_URL:-http://localhost:9090}"
       AUTH_APP_FRONTEND_URL: "${FRONTEND_URL:-http://localhost:5173}"
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    networks:
-      - auth-network
     volumes:
       - ./config.yaml:/root/config.yaml:ro  # Optional: mount custom config
     healthcheck:
@@ -73,23 +66,21 @@ services:
       timeout: 5s
       retries: 3
 
-  # Optional: MongoDB admin interface
-  mongo-express:
-    image: mongo-express:latest
-    container_name: auth-module-mongo-express
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: admin
-    depends_on:
-      - mongodb
-    networks:
-      - auth-network
-    profiles:
-      - debug  # Only starts with: docker-compose --profile debug up
+  # Optional: MongoDB admin interface (disabled - using host MongoDB)
+  # mongo-express:
+  #   image: mongo-express:latest
+  #   container_name: auth-module-mongo-express
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     ME_CONFIG_MONGODB_URL: mongodb://host.docker.internal:27017/
+  #     ME_CONFIG_BASICAUTH_USERNAME: admin
+  #     ME_CONFIG_BASICAUTH_PASSWORD: admin
+  #   networks:
+  #     - auth-network
+  #   profiles:
+  #     - debug  # Only starts with: docker-compose --profile debug up
 
 volumes:
   mongodb_data:

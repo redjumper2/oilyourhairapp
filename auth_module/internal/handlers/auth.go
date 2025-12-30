@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -25,7 +26,8 @@ func NewAuthHandler(db *database.DB, cfg *config.Config) *AuthHandler {
 
 // RequestMagicLinkRequest represents the request body
 type RequestMagicLinkRequest struct {
-	Email string `json:"email" validate:"required,email"`
+	Email  string `json:"email" validate:"required,email"`
+	Domain string `json:"domain" validate:"required"`
 }
 
 // RequestMagicLink handles POST /auth/magic-link/request
@@ -37,21 +39,12 @@ func (h *AuthHandler) RequestMagicLink(c echo.Context) error {
 		})
 	}
 
-	// Extract domain from Host header
-	domain := c.Request().Host
-	// Remove port if present
-	if colonIndex := len(domain) - 1; colonIndex > 0 {
-		for i := len(domain) - 1; i >= 0; i-- {
-			if domain[i] == ':' {
-				domain = domain[:i]
-				break
-			}
-		}
-	}
+	log.Printf("📧 Magic link request - Email: %s, Domain: %s", req.Email, req.Domain)
 
 	// Request magic link
-	err := h.authService.RequestMagicLink(c.Request().Context(), req.Email, domain)
+	err := h.authService.RequestMagicLink(c.Request().Context(), req.Email, req.Domain)
 	if err != nil {
+		log.Printf("❌ Magic link error for %s@%s: %v", req.Email, req.Domain, err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "Failed to send magic link",
 		})

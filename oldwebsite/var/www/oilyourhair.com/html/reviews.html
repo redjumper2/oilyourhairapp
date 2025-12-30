@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - OilYourHair</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #2E7D32, #4CAF50, #66BB6A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #2E7D32;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #2E7D32;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .star-rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .star-rating-input input {
+            display: none;
+        }
+
+        .star-rating-input label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star-rating-input label:hover,
+        .star-rating-input label:hover ~ label,
+        .star-rating-input input:checked ~ label {
+            color: #ffd700;
+        }
+
+        .submit-review {
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: transform 0.3s ease;
+        }
+
+        .submit-review:hover {
+            transform: translateY(-2px);
+        }
+                /* Main Content */
+        main {
+            padding: 12rem 0 5rem 0;
+        }
+
+        .page-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 6rem 0 2rem 0;
+            margin-top: 80px;
+        }
+
+        .page-hero h1 {
+            font-size: 3.5rem;
+            color: #2E7D32;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            letter-spacing: -1px;
+        }
+
+        .page-hero .subtitle {
+            font-size: 1.25rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        .page-hero .description {
+            font-size: 1rem;
+            color: #777;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Review Stats Section */
+        .stats-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #2E7D32;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .review-stats {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .review-stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #2E7D32, #4CAF50, #66BB6A);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #4CAF50;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .star-rating {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin: 0.75rem 0;
+            letter-spacing: 2px;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #666;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Reviews Section */
+        .reviews-section {
+            margin-top: 4rem;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .review-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .review-card:hover::before {
+            left: 100%;
+        }
+
+        .review-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .reviewer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .reviewer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .reviewer-info h3 {
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .reviewer-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .review-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .review-rating {
+            color: #ffd700;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+                .review-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .review-text {
+            color: #555;
+            line-height: 1.7;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .review-highlight {
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-style: italic;
+            color: #2E7D32;
+            font-size: 0.9rem;
+            border-left: 3px solid #4CAF50;
+        }
+
+        .review-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .review-product {
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #4CAF50;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .review-helpful {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        /* Add Review Button */
+        .add-review-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .add-review-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(46, 125, 50, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #4CAF50;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .review-stats {
+                padding: 2rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-hero h1 {
+                font-size: 2rem;
+            }
+
+            .reviewer-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .review-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">OilYourHair</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html" class="active">Reviews</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-hero">
+            <h1>Customer Reviews</h1>
+            <p class="subtitle">Real Stories from Our Hair Care Community</p>
+            <p class="description">Discover authentic experiences and transformations from customers who have embraced the power of natural hair care with OilYourHair's premium, ethically-sourced products.</p>
+        </div>
+
+        <section class="stats-section">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-subtitle">Join thousands of satisfied customers who have transformed their hair care routine with our natural oils and treatments.</p>
+            
+            <div class="review-stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">4.8</span>
+                        <div class="star-rating">★★★★★</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">1,247</span>
+                        <div class="stat-label">Total Reviews</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">96%</span>
+                        <div class="stat-label">Recommend Us</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">98%</span>
+                        <div class="stat-label">Satisfied Customers</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-section">
+            <h2 class="section-title">Featured Reviews</h2>
+            <p class="section-subtitle">Read what our customers are saying about their natural hair transformation journey.</p>
+
+            <div class="reviews-grid">
+                <!-- Existing review cards will be here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Write Your Review</h2>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="reviewerName">Your Name</label>
+                    <input type="text" id="reviewerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Rating</label>
+                    <div class="star-rating-input">
+                        <input type="radio" id="star5" name="rating" value="5" required>
+                        <label for="star5">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1">★</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productSelect">Product</label>
+                    <select id="productSelect" required>
+                        <option value="">Select a product</option>
+                        <option value="Nourishing Hair Oil">Nourishing Hair Oil</option>
+                        <option value="Curl Defining Serum">Curl Defining Serum</option>
+                        <option value="Repair Treatment Oil">Repair Treatment Oil</option>
+                        <option value="Daily Moisture Oil">Daily Moisture Oil</option>
+                        <option value="Shine & Strength Formula">Shine & Strength Formula</option>
+                        <option value="Complete Hair Care Set">Complete Hair Care Set</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewText">Your Review</label>
+                    <textarea id="reviewText" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewHighlight">Highlight (Optional)</label>
+                    <input type="text" id="reviewHighlight" placeholder="Share your key takeaway">
+                </div>
+
+                <button type="submit" class="submit-review">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <button class="add-review-btn" onclick="addReview()" title="Add Your Review">+</button>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#shipping">Shipping Info</a>
+                <a href="#returns">Returns</a>
+            </div>
+            <p>&copy; 2025 OilYourHair. All rights reserved. Nourish Your Crown - Transform Your Hair.</p>
+        </div>
+    </footer>
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        // Function to create a review card
+        function createReviewCard(review) {
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            const initial = review.name.charAt(0);
+            const date = new Date(review.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+            return `
+                <div class="review-card">
+                    <div class="reviewer-header">
+                        <div class="reviewer-avatar">${initial}</div>
+                        <div class="reviewer-info">
+                            <h3>${review.name}</h3>
+                            <div class="reviewer-meta">
+                                <div class="review-date">${date}</div>
+                                <div class="review-rating">${stars}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <div class="review-text">"${review.text}"</div>
+                        ${review.highlight ? `<div class="review-highlight">"${review.highlight}"</div>` : ''}
+                    </div>
+                    <div class="review-footer">
+                        <div class="review-product">${review.product}</div>
+                        <div class="review-helpful">Helpful (${review.helpfulCount || 0})</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load reviews from API
+        async function loadReviews() {
+            try {
+                const response = await fetch(`${API_URL}/reviews`);
+                const data = await response.json();
+                
+                const reviewsGrid = document.querySelector('.reviews-grid');
+                reviewsGrid.innerHTML = ''; // Clear existing reviews
+                
+                if (data.reviews && data.reviews.length > 0) {
+                    data.reviews.forEach(review => {
+                        reviewsGrid.innerHTML += createReviewCard(review);
+                    });
+                } else {
+                    // If no reviews, load initial sample reviews
+                    initialReviews.forEach(review => {
+                        reviewsGrid.innerHTML += createReviewCard(review);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                // Load initial reviews as fallback
+                loadInitialReviews();
+            }
+        }
+
+        // Add review functionality
+        function addReview() {
+            document.getElementById('reviewModal').style.display = 'block';
+        }
+
+        // Close modal when clicking the X or outside the modal
+        document.querySelector('.close-modal').onclick = function() {
+            document.getElementById('reviewModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('reviewModal')) {
+                document.getElementById('reviewModal').style.display = 'none';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const newReview = {
+                name: document.getElementById('reviewerName').value,
+                rating: parseInt(document.querySelector('input[name="rating"]:checked').value),
+                product: document.getElementById('productSelect').value,
+                text: document.getElementById('reviewText').value,
+                highlight: document.getElementById('reviewHighlight').value
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newReview)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit review');
+                }
+
+                // Reset form and close modal
+                this.reset();
+                document.getElementById('reviewModal').style.display = 'none';
+                
+                // Reload reviews
+                await loadReviews();
+                
+                alert('Thank you for your review!');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error submitting review. Please try again.');
+            }
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Initialize reviews on page load
+        document.addEventListener('DOMContentLoaded', loadReviews);
+    </script>
+</body>
+</html>

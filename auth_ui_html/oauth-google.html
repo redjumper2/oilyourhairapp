@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signing in with Google...</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div id="error-state" class="hidden">
+                <div class="alert alert-error">
+                    <h3 style="margin-bottom: 0.5rem;">Error</h3>
+                    <p id="error-message">Domain parameter is required for Google OAuth.</p>
+                </div>
+            </div>
+
+            <div id="loading-state" class="text-center">
+                <div class="spinner"></div>
+                <h2 style="margin-bottom: 0.5rem;">Redirecting to Google...</h2>
+                <p style="color: #6b7280;">Please wait while we redirect you to sign in.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth-api.js"></script>
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const domain = urlParams.get('domain');
+        const redirectUrl = urlParams.get('redirect');
+
+        if (!domain) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.remove('hidden');
+        } else {
+            // Build OAuth URL
+            const apiUrl = 'https://api.oilyourhair.com/api/v1';
+            const params = new URLSearchParams();
+            params.set('domain', domain);
+            if (redirectUrl) params.set('redirect', redirectUrl);
+
+            // Redirect to backend Google OAuth endpoint
+            const oauthUrl = `${apiUrl}/auth/google?${params.toString()}`;
+            window.location.href = oauthUrl;
+        }
+    </script>
+</body>
+</html>

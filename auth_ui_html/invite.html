@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accept Invitation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center">
+                <div class="spinner"></div>
+                <p style="color: #6b7280;">Verifying invitation...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden">
+                <div class="alert alert-error">
+                    <h3 style="margin-bottom: 0.5rem;">Invalid Invitation</h3>
+                    <p id="error-message"></p>
+                </div>
+            </div>
+
+            <!-- Invitation Details -->
+            <div id="invitation-state" class="hidden">
+                <div class="logo">
+                    <h1 id="company-name">Welcome</h1>
+                </div>
+
+                <h2 style="margin-bottom: 1.5rem; text-align: center;">You're Invited!</h2>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="invite-email"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Role</span>
+                        <span class="info-value" id="invite-role"></span>
+                    </div>
+                    <div class="info-row" style="border-bottom: none;">
+                        <span class="info-label">Expires</span>
+                        <span class="info-value" id="invite-expires"></span>
+                    </div>
+                </div>
+
+                <div id="error-alert" class="alert alert-error hidden"></div>
+
+                <button id="accept-btn" class="btn btn-primary">
+                    Accept Invitation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth-api.js"></script>
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const redirectUrl = urlParams.get('redirect');
+
+        let invitation = null;
+
+        async function verifyInvitation() {
+            if (!token) {
+                showError('Missing invitation token');
+                return;
+            }
+
+            try {
+                invitation = await api.verifyInvitation(token);
+
+                // Apply branding
+                if (invitation.branding) {
+                    document.getElementById('company-name').textContent =
+                        invitation.branding.company_name || invitation.domain;
+                    if (invitation.branding.primary_color) {
+                        document.documentElement.style.setProperty('--brand-primary',
+                            invitation.branding.primary_color);
+                    }
+                }
+
+                // Show invitation details
+                document.getElementById('invite-email').textContent = invitation.email;
+                document.getElementById('invite-role').textContent =
+                    invitation.role.charAt(0).toUpperCase() + invitation.role.slice(1);
+
+                const expiresDate = new Date(invitation.expires_at);
+                document.getElementById('invite-expires').textContent =
+                    expiresDate.toLocaleDateString() + ' ' + expiresDate.toLocaleTimeString();
+
+                // Show invitation state
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('invitation-state').classList.remove('hidden');
+            } catch (error) {
+                showError(error.message || 'Failed to verify invitation');
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('invitation-state').classList.add('hidden');
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-state').classList.remove('hidden');
+        }
+
+        // Handle accept button
+        document.getElementById('accept-btn').addEventListener('click', async () => {
+            const acceptBtn = document.getElementById('accept-btn');
+            const errorAlert = document.getElementById('error-alert');
+
+            acceptBtn.disabled = true;
+            acceptBtn.textContent = 'Accepting...';
+            errorAlert.classList.add('hidden');
+
+            try {
+                const result = await api.acceptInvitation(token, invitation.email);
+
+                // Redirect to domain with JWT token in hash
+                const redirect = redirectUrl || `https://${invitation.domain}`;
+                window.location.href = `${redirect}#token=${result.token}`;
+            } catch (error) {
+                errorAlert.textContent = error.message || 'Failed to accept invitation';
+                errorAlert.classList.remove('hidden');
+                acceptBtn.disabled = false;
+                acceptBtn.textContent = 'Accept Invitation';
+            }
+        });
+
+        // Initialize
+        verifyInvitation();
+    </script>
+</body>
+</html>

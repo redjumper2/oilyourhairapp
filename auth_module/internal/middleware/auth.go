@@ -112,10 +112,22 @@ func RequirePermission(permission string) echo.MiddlewareFunc {
 	}
 }
 
-// extractDomain removes port from host if present
+// extractDomain removes port from host if present and strips common subdomains
 func extractDomain(host string) string {
+	// Remove port if present
 	if idx := strings.Index(host, ":"); idx != -1 {
-		return host[:idx]
+		host = host[:idx]
 	}
+
+	// Strip common subdomains (api, auth, www)
+	parts := strings.Split(host, ".")
+	if len(parts) >= 3 {
+		subdomain := parts[0]
+		if subdomain == "api" || subdomain == "auth" || subdomain == "www" {
+			// Return domain without subdomain
+			return strings.Join(parts[1:], ".")
+		}
+	}
+
 	return host
 }

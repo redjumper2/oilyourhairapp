@@ -26,8 +26,8 @@ WORKDIR /root/
 # Copy the binary from builder
 COPY --from=builder /app/auth-module .
 
-# Copy config example (will be mounted in docker-compose)
-COPY config.yaml.example ./config.yaml.example
+# Copy config example (config.yaml will be mounted via docker-compose)
+COPY --from=builder /app/config.yaml.example ./config.yaml.example
 
 # Expose port
 EXPOSE 8080

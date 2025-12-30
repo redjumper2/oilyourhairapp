@@ -1,6 +1,22 @@
-version: '3.8'
-
 services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: auth-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: auth_module
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - auth-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/auth_module --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Auth Module API (Backend)
   auth-api:
     build:
@@ -16,12 +32,12 @@ services:
       AUTH_SERVER_HOST: "0.0.0.0"
       AUTH_SERVER_ENV: "development"
 
-      # MongoDB (use host network to connect to existing MongoDB)
-      AUTH_MONGODB_URI: "mongodb://host.docker.internal:27017"
+      # MongoDB (using docker service)
+      AUTH_MONGODB_URI: "mongodb://mongodb:27017"
       AUTH_MONGODB_DATABASE: "auth_module"
 
       # JWT
-      AUTH_JWT_SECRET: "${JWT_SECRET:-dev-secret-change-in-production}"
+      AUTH_JWT_SECRET: "dev-secret-change-in-production-12345678901234567890"
       AUTH_JWT_EXPIRY_HOURS: "24"
 
       # Google OAuth (optional)
@@ -39,9 +55,14 @@ services:
       # Magic link
       AUTH_MAGIC_LINK_EXPIRY_MINUTES: "15"
 
-      # App URLs
-      AUTH_APP_URL: "http://localhost:9090"
-      AUTH_APP_FRONTEND_URL: "http://localhost:5173"
+      # App URLs (use production URLs for proper OAuth/email links)
+      AUTH_APP_URL: "https://api.oilyourhair.com"
+      AUTH_APP_FRONTEND_URL: "https://auth.oilyourhair.com"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./auth_module/config.yaml:/root/config.yaml:ro
     networks:
       - auth-network
     healthcheck:
@@ -50,24 +71,19 @@ services:
       timeout: 5s
       retries: 3
 
-  # Auth UI Module (Frontend)
+  # Auth UI Module (Frontend) - Plain HTML
   auth-ui:
     build:
-      context: ./auth_ui_module
+      context: ./auth_ui_html
       dockerfile: Dockerfile
     container_name: auth-ui
     restart: unless-stopped
     ports:
       - "5173:5173"
-    environment:
-      VITE_API_URL: "http://localhost:9090/api/v1"
     depends_on:
       - auth-api
     networks:
       - auth-network
-    volumes:
-      # Mount source for hot-reload in development
-      - ./auth_ui_module/src:/app/src
 
   # Test Domain (Sample Customer Site)
   test-domain:
@@ -80,6 +96,29 @@ services:
       - ./test_domain:/usr/share/nginx/html:ro
     networks:
       - auth-network
+
+  # OilYourHair.com Frontend (Production Site with custom nginx)
+  oilyourhair-frontend:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: oilyourhair-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      # Mount for live updates during development
+      - ./frontend/oilyourhair.com/html:/var/www/oilyourhair.com/html:ro
+      - ./nginx/sites-available:/etc/nginx/sites-available:ro
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+    networks:
+      - auth-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
 
 networks:
   auth-network:
