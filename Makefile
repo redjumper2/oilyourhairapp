@@ -1,4 +1,4 @@
-.PHONY: help build start stop restart logs clean deploy dev-db status
+.PHONY: help build start stop restart logs clean deploy dev-db status test-website
 .PHONY: create-invite list-invites list-users create-domain list-domains delete-invite delete-user
 
 # Default values
@@ -24,6 +24,9 @@ help:
 	@echo ""
 	@echo "Database Management:"
 	@echo "  make dev-db                 - Access MongoDB shell"
+	@echo ""
+	@echo "Local Testing:"
+	@echo "  make test-website           - Serve test website (products + auth) on :3000"
 	@echo ""
 	@echo "Invitation Management:"
 	@echo "  make create-invite EMAIL=user@example.com [NAME=John] [DOMAIN=oilyourhair.com] [ROLE=customer]"
@@ -262,3 +265,28 @@ list-domains:
 	@echo "All domains:"
 	@echo ""
 	@docker exec auth-api ./auth-module domain list
+
+# ============================================
+# Local Testing (Product Management + Auth)
+# ============================================
+
+# Serve the generic test website for product management and auth testing
+test-website:
+	@echo "🌐 Starting test website for product management + auth..."
+	@echo ""
+	@echo "This website tests both:"
+	@echo "  - Product catalog and management (products_module)"
+	@echo "  - Authentication and login (auth_module)"
+	@echo ""
+	@echo "Website available at:"
+	@echo "  http://localhost:3000/index.html      - Homepage (bestselling products)"
+	@echo "  http://localhost:3000/shop.html       - Product catalog with search/filters"
+	@echo "  http://localhost:3000/admin/products.html - Admin product management"
+	@echo ""
+	@echo "Prerequisites:"
+	@echo "  - Products module running on :9091"
+	@echo "  - Auth module running on :9090"
+	@echo ""
+	@echo "Press Ctrl+C to stop the server"
+	@echo ""
+	@cd oilyourhair.com/public && python3 -m http.server 3000
