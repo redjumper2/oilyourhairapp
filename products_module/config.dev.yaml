@@ -9,7 +9,7 @@ mongodb:
 
 jwt:
   # Must match auth_module JWT secret
-  secret: "your-secret-key-here"
+  secret: "dev-secret-key-for-local-testing-only"
 
 cors:
   allowed_origins:
