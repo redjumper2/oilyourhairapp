@@ -12,13 +12,14 @@ import (
 
 // DB holds MongoDB collections
 type DB struct {
-	Client         *mongo.Client
-	Database       *mongo.Database
-	Domains        *mongo.Collection
-	Users          *mongo.Collection
-	Invitations    *mongo.Collection
-	InvitationLogs *mongo.Collection
+	Client          *mongo.Client
+	Database        *mongo.Database
+	Domains         *mongo.Collection
+	Users           *mongo.Collection
+	Invitations     *mongo.Collection
+	InvitationLogs  *mongo.Collection
 	MagicLinkTokens *mongo.Collection
+	APIKeys         *mongo.Collection
 }
 
 // Connect establishes connection to MongoDB and returns DB instance
@@ -50,6 +51,7 @@ func Connect(uri, dbName string) (*DB, error) {
 		Invitations:     database.Collection("invitations"),
 		InvitationLogs:  database.Collection("invitation_logs"),
 		MagicLinkTokens: database.Collection("magic_link_tokens"),
+		APIKeys:         database.Collection("api_keys"),
 	}
 
 	// Create indexes
@@ -138,6 +140,31 @@ func (db *DB) createIndexes(ctx context.Context) error {
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create magic_link_tokens TTL index: %w", err)
+	}
+
+	// APIKeys: unique index on key_id (jti claim)
+	_, err = db.APIKeys.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.D{{Key: "key_id", Value: 1}},
+		Options: options.Index().SetUnique(true),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create api_keys key_id index: %w", err)
+	}
+
+	// APIKeys: compound index on {domain, service} for filtering
+	_, err = db.APIKeys.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.D{{Key: "domain", Value: 1}, {Key: "service", Value: 1}},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create api_keys domain/service index: %w", err)
+	}
+
+	// APIKeys: index on expires_at for expiration queries
+	_, err = db.APIKeys.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys: bson.D{{Key: "expires_at", Value: 1}},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create api_keys expires_at index: %w", err)
 	}
 
 	return nil

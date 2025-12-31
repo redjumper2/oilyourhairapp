@@ -1,0 +1,22 @@
+server:
+  host: "0.0.0.0"
+  port: "9091"
+  env: "development"
+
+mongodb:
+  uri: "mongodb://localhost:27017"
+  database: "products_module"
+
+jwt:
+  # Must match auth_module JWT secret
+  secret: "your-secret-key-here"
+
+cors:
+  allowed_origins:
+    - "http://localhost:3000"
+    - "https://oilyourhair.com"
+
+auth:
+  base_url: "http://localhost:8080"
+  domains_db: "auth_module"
+  domains_collection: "domains"

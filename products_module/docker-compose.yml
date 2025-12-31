@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  products-api:
+    build: .
+    container_name: products-api
+    ports:
+      - "9091:9091"
+    environment:
+      - PRODUCTS_SERVER_PORT=9091
+      - PRODUCTS_SERVER_ENV=production
+      - PRODUCTS_MONGODB_URI=mongodb://mongodb:27017
+      - PRODUCTS_MONGODB_DATABASE=products_module
+      - PRODUCTS_JWT_SECRET=${JWT_SECRET}
+      - PRODUCTS_CORS_ALLOWED_ORIGINS=http://localhost:3000,https://oilyourhair.com
+      - PRODUCTS_AUTH_DOMAINS_DB=auth_module
+    networks:
+      - auth-network
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  # Shared MongoDB (if not already running from auth_module)
+  mongodb:
+    image: mongo:7
+    container_name: products-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - auth-network
+    restart: unless-stopped
+
+networks:
+  auth-network:
+    external: true
+    name: auth-network
+
+volumes:
+  mongodb_data:

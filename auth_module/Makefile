@@ -34,6 +34,11 @@ help:
 	@echo "  make domain-list-local   List all domains"
 	@echo "  make domain-delete-local DOMAIN=example.com"
 	@echo ""
+	@echo "API Key Management (Local):"
+	@echo "  make apikey-create-local DOMAIN=example.com SERVICE=products PERMISSIONS=\"products.read,products.write\""
+	@echo "  make apikey-list-local DOMAIN=example.com [SERVICE=products]"
+	@echo "  make apikey-revoke-local KEY_ID=key-id"
+	@echo ""
 	@echo "Full Docker (Everything in containers):"
 	@echo "  make docker-build     Build Docker image"
 	@echo "  make docker-up        Start all services (MongoDB + API)"
@@ -214,6 +219,47 @@ domain-delete-local:
 	fi
 	@echo "⚠️  Deleting domain: $(DOMAIN)"
 	@./$(APP_NAME) domain delete --config=config.dev.yaml --domain=$(DOMAIN)
+
+#------------------------------------
+# API Key Management (Local)
+#------------------------------------
+
+apikey-create-local:
+	@if [ -z "$(DOMAIN)" ] || [ -z "$(SERVICE)" ]; then \
+		echo "❌ Error: DOMAIN and SERVICE are required"; \
+		echo "Usage: make apikey-create-local DOMAIN=example.com SERVICE=products PERMISSIONS=\"products.read,products.write\""; \
+		exit 1; \
+	fi
+	@echo "🔑 Creating API key for $(DOMAIN) / $(SERVICE)..."
+	@./$(APP_NAME) apikey create \
+		--config=config.dev.yaml \
+		--domain=$(DOMAIN) \
+		--service=$(SERVICE) \
+		--description="$(DESCRIPTION)" \
+		--permissions=$(PERMISSIONS)
+
+apikey-list-local:
+	@if [ -z "$(DOMAIN)" ]; then \
+		echo "❌ Error: DOMAIN is required"; \
+		echo "Usage: make apikey-list-local DOMAIN=example.com [SERVICE=products]"; \
+		exit 1; \
+	fi
+	@echo "📋 Listing API keys for $(DOMAIN)..."
+	@./$(APP_NAME) apikey list \
+		--config=config.dev.yaml \
+		--domain=$(DOMAIN) \
+		--service=$(SERVICE)
+
+apikey-revoke-local:
+	@if [ -z "$(KEY_ID)" ]; then \
+		echo "❌ Error: KEY_ID is required"; \
+		echo "Usage: make apikey-revoke-local KEY_ID=key-id"; \
+		exit 1; \
+	fi
+	@echo "⚠️  Revoking API key: $(KEY_ID)"
+	@./$(APP_NAME) apikey revoke \
+		--config=config.dev.yaml \
+		--key-id=$(KEY_ID)
 
 #------------------------------------
 # Domain Management (Docker)

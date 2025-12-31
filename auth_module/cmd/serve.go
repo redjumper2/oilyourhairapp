@@ -92,6 +92,7 @@ func setupRoutes(e *echo.Echo, db *database.DB, cfg *config.Config) {
 	authHandler := handlers.NewAuthHandler(db, cfg)
 	oauthHandler := handlers.NewOAuthHandler(db, cfg)
 	adminHandler := handlers.NewAdminHandler(db, cfg)
+	apiKeyHandler := handlers.NewAPIKeyHandler(services.NewAPIKeyService(db, cfg))
 	authMiddleware := middleware.AuthMiddleware(cfg)
 	requireAdmin := middleware.RequireRole("admin")
 
@@ -141,6 +142,13 @@ func setupRoutes(e *echo.Echo, db *database.DB, cfg *config.Config) {
 	// Permissions
 	admin.GET("/permissions", adminHandler.GetPermissions)
 	admin.GET("/permissions/roles", adminHandler.GetRolePermissions)
+
+	// API Key Management (protected, admin only)
+	v1.POST("/api-keys", apiKeyHandler.CreateAPIKey, authMiddleware, requireAdmin)
+	v1.GET("/domains/:domain/api-keys", apiKeyHandler.ListAPIKeys, authMiddleware, requireAdmin)
+	v1.GET("/api-keys/:keyId", apiKeyHandler.GetAPIKey, authMiddleware, requireAdmin)
+	v1.DELETE("/api-keys/:keyId", apiKeyHandler.RevokeAPIKey, authMiddleware, requireAdmin)
+	v1.GET("/domains/:domain/api-keys/expiring", apiKeyHandler.GetExpiringKeys, authMiddleware, requireAdmin)
 
 	log.Println("✅ Routes configured")
 }

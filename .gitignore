@@ -29,6 +29,7 @@ Thumbs.db
 .idea/
 *.sublime-workspace
 *.sublime-project
+.claude/
 
 # === Tests / coverage ===
 coverage/

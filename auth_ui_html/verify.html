@@ -28,6 +28,7 @@
         </div>
     </div>
 
+    <script src="auth-api.js?v=2"></script>
     <script>
         // Get token from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -37,6 +38,13 @@
         console.log('   Token:', token);
 
         const apiUrl = 'https://api.oilyourhair.com/api/v1';
+
+        // Apply branding based on domain from token verification response
+        function applyBranding(domain, branding) {
+            if (branding && branding.primary_color) {
+                document.documentElement.style.setProperty('--brand-primary', branding.primary_color);
+            }
+        }
 
         async function verifyMagicLink() {
             if (!token) {
@@ -72,7 +80,18 @@
 
             } catch (error) {
                 console.error('❌ Verification error:', error);
+                // Load branding for error page
+                loadDefaultBranding();
                 showError(error.message || 'Failed to verify magic link');
+            }
+        }
+
+        async function loadDefaultBranding() {
+            try {
+                const branding = await api.getDomainBranding('oilyourhair.com');
+                applyBranding('oilyourhair.com', branding);
+            } catch (error) {
+                console.error('Failed to load branding:', error);
             }
         }
 
@@ -81,6 +100,9 @@
             document.getElementById('error-message').textContent = message;
             document.getElementById('error-state').classList.remove('hidden');
         }
+
+        // Load branding on page load
+        loadDefaultBranding();
 
         // Start verification
         verifyMagicLink();
