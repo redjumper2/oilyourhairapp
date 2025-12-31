@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oil Your Hair - Natural Hair Care Products</title>
+    <link rel="stylesheet" href="../css/products.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 50px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px;
+            background: var(--background);
+            border-radius: 8px;
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">🌿 Oil Your Hair</a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="admin/products.html">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="container">
+            <h1>🌿 Natural Hair Care</h1>
+            <p>Pure, organic oils and treatments for healthy, beautiful hair</p>
+            <a href="shop.html" class="btn btn-primary" style="background: white; color: var(--brand-primary); font-size: 18px; padding: 15px 40px;">
+                Shop Now
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🥥</div>
+                <h3>Organic Oils</h3>
+                <p>100% pure coconut, argan, and castor oils</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌱</div>
+                <h3>Natural Ingredients</h3>
+                <p>No harsh chemicals, only nature's best</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">✨</div>
+                <h3>Proven Results</h3>
+                <p>Transform your hair with our treatments</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🚚</div>
+                <h3>Fast Shipping</h3>
+                <p>Delivered fresh to your door</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; padding: 40px 0;">
+            <h2 style="margin-bottom: 30px;">Featured Products</h2>
+            <div id="featuredProducts"></div>
+            <a href="shop.html" class="btn btn-primary" style="margin-top: 30px;">View All Products</a>
+        </div>
+    </div>
+
+    <script src="../js/api/products-api.js"></script>
+    <script src="../js/components/ProductGrid.js"></script>
+    <script>
+        // Load featured products
+        const api = new ProductsAPI('http://localhost:9091', 'oilyourhair.com');
+        const featuredGrid = new ProductGrid(document.getElementById('featuredProducts'), api);
+
+        // Load first 3 products as featured
+        featuredGrid.load().then(() => {
+            featuredGrid.products = featuredGrid.products.slice(0, 3);
+            featuredGrid.render();
+        });
+    </script>
+</body>
+</html>
