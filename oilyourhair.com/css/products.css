@@ -121,11 +121,26 @@ nav a:hover {
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
 }
 
 .product-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.product-badge {
+    position: absolute;
+    top: 15px;
+    right: -35px;
+    color: white;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    text-align: center;
 }
 
 .product-image {

@@ -92,7 +92,7 @@
         </div>
 
         <div style="text-align: center; padding: 40px 0;">
-            <h2 style="margin-bottom: 30px;">Featured Products</h2>
+            <h2 style="margin-bottom: 30px;">Best-Selling Products</h2>
             <div id="featuredProducts"></div>
             <a href="shop.html" class="btn btn-primary" style="margin-top: 30px;">View All Products</a>
         </div>
@@ -101,13 +101,16 @@
     <script src="../js/api/products-api.js"></script>
     <script src="../js/components/ProductGrid.js"></script>
     <script>
-        // Load featured products
+        // Load bestselling products
         const api = new ProductsAPI('http://localhost:9091', 'oilyourhair.com');
         const featuredGrid = new ProductGrid(document.getElementById('featuredProducts'), api);
 
-        // Load first 3 products as featured
+        // Load products and filter for bestsellers and popular items
         featuredGrid.load().then(() => {
-            featuredGrid.products = featuredGrid.products.slice(0, 3);
+            featuredGrid.products = featuredGrid.products.filter(p =>
+                p.attributes?.badge === 'Bestseller' ||
+                p.attributes?.badge === 'Popular'
+            );
             featuredGrid.render();
         });
     </script>

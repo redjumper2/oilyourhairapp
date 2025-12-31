@@ -68,9 +68,11 @@ class ProductGrid {
 
         const price = this.getPrice(product);
         const stockStatus = this.getStockStatus(product);
+        const badge = this.renderBadge(product.attributes?.badge);
 
         return `
             <div class="product-card" data-product-id="${product.id}">
+                ${badge}
                 <div class="product-image">
                     <img src="${imageUrl}" alt="${product.name}" loading="lazy">
                     ${stockStatus.badge}
@@ -134,12 +136,31 @@ class ProductGrid {
         }
 
         const tags = Object.entries(attributes)
-            .filter(([key]) => key !== 'category') // Category shown separately
+            .filter(([key]) => key !== 'category' && key !== 'badge') // Category and badge shown separately
             .slice(0, 3) // Show max 3 attributes
             .map(([key, value]) => `<span class="attribute-tag">${value}</span>`)
             .join('');
 
         return `<div class="product-attributes">${tags}</div>`;
+    }
+
+    renderBadge(badge) {
+        if (!badge) return '';
+
+        const badgeColors = {
+            'Bestseller': 'background: linear-gradient(45deg, #ff6b6b, #ff8e8e);',
+            'Popular': 'background: linear-gradient(45deg, #4CAF50, #66BB6A);',
+            'New': 'background: linear-gradient(45deg, #2196F3, #42A5F5);',
+            'Premium': 'background: linear-gradient(45deg, #FFD700, #FFA500);'
+        };
+
+        const style = badgeColors[badge] || 'background: linear-gradient(45deg, #9E9E9E, #BDBDBD);';
+
+        return `
+            <div class="product-badge" style="${style}">
+                ${badge.toUpperCase()}
+            </div>
+        `;
     }
 
     truncate(text, maxLength) {
