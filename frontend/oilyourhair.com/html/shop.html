@@ -406,8 +406,8 @@
                             🔒 Login to view price
                         </div>
                         <div class="product-actions">
-                            <button class="add-to-cart" onclick="addToCart(${p.id})" data-auth-required style="display: none;">Add to Cart</button>
-                            <button class="quick-view" onclick="quickView(${p.id})">Quick View</button>
+                            <button class="add-to-cart" onclick="addToCart('${p.id}')" data-auth-required style="display: none;">Add to Cart</button>
+                            <button class="quick-view" onclick="quickView('${p.id}')">Quick View</button>
                             <button class="login-to-purchase" onclick="login()" data-auth-hidden style="background: linear-gradient(45deg, #2E7D32, #4CAF50); color: white; border: none; padding: 0.75rem 1rem; border-radius: 10px; font-weight: bold; cursor: pointer;">
                                 Login to Purchase
                             </button>
@@ -459,12 +459,12 @@
                             <div class="cart-item-title">${item.name}</div>
                             <div class="cart-item-price">$${item.price}</div>
                             <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
                                 <span class="quantity">${item.quantity}</span>
-                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                                <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
                             </div>
                         </div>
-                        <button class="remove-item" onclick="removeFromCart(${item.id})">Remove</button>
+                        <button class="remove-item" onclick="removeFromCart('${item.id}')">Remove</button>
                     </div>
                 `).join('');
 
