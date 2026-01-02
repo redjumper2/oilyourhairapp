@@ -1,0 +1,1 @@
+/home/sparque/dev/oilyourhairapp/nginx/sites-available/api.oilyourhair.com

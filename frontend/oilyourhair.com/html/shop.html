@@ -341,53 +341,51 @@
     </footer>
 
     <script>
-        const products = [
-            {
-                id: 1, name: "Argan Oil Elixir", price: 45.99,
-                image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-                description: "Pure Moroccan argan oil for deep nourishment and shine",
-                features: ["Organic", "Cold-Pressed", "Anti-Aging"],
-                hairType: ["dry", "damaged", "normal"], ingredient: "argan", badge: "Bestseller"
-            },
-            {
-                id: 2, name: "Coconut Miracle Oil", price: 29.99,
-                image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-                description: "Virgin coconut oil for moisture and protection",
-                features: ["Virgin", "Moisturizing", "Heat Protection"],
-                hairType: ["dry", "curly", "normal"], ingredient: "coconut", badge: ""
-            },
-            {
-                id: 3, name: "Jojoba Scalp Treatment", price: 38.99,
-                image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-                description: "Lightweight jojoba oil for scalp health and balance",
-                features: ["Lightweight", "Scalp Care", "Non-Greasy"],
-                hairType: ["oily", "normal", "damaged"], ingredient: "jojoba", badge: "New"
-            },
-            {
-                id: 4, name: "Rosemary Growth Serum", price: 52.99,
-                image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-                description: "Stimulating rosemary oil blend for hair growth",
-                features: ["Growth Formula", "Stimulating", "Herbal"],
-                hairType: ["dry", "damaged", "normal"], ingredient: "rosemary", badge: "Popular"
-            },
-            {
-                id: 5, name: "Castor Oil Strength Booster", price: 34.99,
-                image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-                description: "Thick castor oil for strengthening and thickness",
-                features: ["Strengthening", "Thickening", "Rich Formula"],
-                hairType: ["damaged", "dry", "curly"], ingredient: "castor", badge: ""
-            },
-            {
-                id: 6, name: "Luxury Hair Oil Blend", price: 89.99,
-                image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-                description: "Premium blend of 7 exotic oils for ultimate luxury",
-                features: ["Luxury Blend", "7 Oils", "Premium"],
-                hairType: ["dry", "damaged", "normal", "curly"], ingredient: "blend", badge: "Premium"
-            }
-        ];
+        // Products Module API Integration
+        // Use local API in development, public API in production
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:9091'
+            : 'https://api.oilyourhair.com';
+        const DOMAIN = 'oilyourhair.com';
 
+        let products = [];
         let cart = [];
-        let filteredProducts = [...products];
+        let filteredProducts = [];
+
+        // Fetch products from API
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/public/${DOMAIN}/products`);
+                const data = await response.json();
+
+                // Map API response to frontend format
+                products = (data.products || []).map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    price: p.base_price,
+                    image: p.images && p.images[0] ? p.images[0] : 'https://via.placeholder.com/400x400?text=No+Image',
+                    description: p.description || '',
+                    features: p.attributes?.features ? p.attributes.features.split(',') : [],
+                    hairType: p.attributes?.hair_type ? p.attributes.hair_type.split(',') : [],
+                    ingredient: p.attributes?.type || '',
+                    badge: p.attributes?.badge || ''
+                }));
+
+                filteredProducts = [...products];
+                loadProducts();
+            } catch (error) {
+                console.error('Failed to load products:', error);
+                // Show error message to user
+                document.getElementById('productsGrid').innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                        <p style="color: #666; font-size: 1.2rem;">⚠️ Unable to load products. Please make sure the products API is running.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize products on page load
+        fetchProducts();
 
         function loadProducts() {
             const grid = document.getElementById('productsGrid');

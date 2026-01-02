@@ -99,6 +99,16 @@ body {
     opacity: 0.9;
 }
 
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #e5e7eb;
+}
+
 .btn-google {
     background: white;
     border: 1px solid #d1d5db;

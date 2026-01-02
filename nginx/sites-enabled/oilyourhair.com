@@ -1,1 +1,1 @@
-../sites-available/oilyourhair.com
+/home/sparque/dev/oilyourhairapp/nginx/sites-available/oilyourhair.com

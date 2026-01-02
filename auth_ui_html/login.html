@@ -21,9 +21,12 @@
                     <p style="color: #6b7280; margin-bottom: 1rem;">
                         We've sent a magic link to <strong id="sent-email"></strong>
                     </p>
-                    <p style="color: #6b7280; font-size: 0.875rem;">
+                    <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem;">
                         Click the link in your email to sign in.
                     </p>
+                    <a href="#" id="back-btn" class="btn btn-secondary" style="display: inline-block;">
+                        ← Back to site
+                    </a>
                 </div>
             </div>
 
@@ -133,6 +136,9 @@
         // Setup Google OAuth link
         document.getElementById('google-oauth-btn').href =
             `oauth-google.html?domain=${encodeURIComponent(domain)}&redirect=${encodeURIComponent(redirectUrl)}`;
+
+        // Setup back button
+        document.getElementById('back-btn').href = redirectUrl;
 
         // Initialize
         if (domain) {

@@ -636,29 +636,8 @@
     <section id="products" class="products">
         <div class="container">
             <h2>Best-Selling Products</h2>
-            <div class="product-grid">
-                <div class="product-card">
-                    <div class="bestseller">BESTSELLER</div>
-                    <div class="product-icon">🌿</div>
-                    <h3>Argan Gold Elixir</h3>
-                    <p>Pure Moroccan argan oil enriched with vitamin E. Perfect for all hair types, providing deep nourishment and brilliant shine.</p>
-                    <div class="price">$28.99</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="product-icon">🥥</div>
-                    <h3>Coconut Dream Blend</h3>
-                    <p>Tropical coconut oil infused with hibiscus extract. Repairs damaged hair and promotes healthy growth.</p>
-                    <div class="price">$24.99</div>
-                </div>
-                
-                <div class="product-card">
-                    <div class="bestseller">BESTSELLER</div>
-                    <div class="product-icon">✨</div>
-                    <h3>Royal Treatment Bundle</h3>
-                    <p>Complete hair care set featuring our top 3 oils plus a luxury applicator brush. Save 25% with this exclusive bundle.</p>
-                    <div class="price">$67.99</div>
-                </div>
+            <div class="product-grid" id="bestsellingProducts">
+                <!-- Products will be loaded dynamically from API -->
             </div>
         </div>
     </section>
@@ -802,6 +781,66 @@
                 body.style.overflow = '';
             }
         });
+
+        // Products Module API Integration - Load Bestsellers
+        // Use local API in development, public API in production
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:9091'
+            : 'https://api.oilyourhair.com';
+        const DOMAIN = 'oilyourhair.com';
+
+        // Icon mapping for different product types
+        const productIcons = {
+            'argan': '🌿',
+            'coconut': '🥥',
+            'jojoba': '🌱',
+            'rosemary': '🌿',
+            'castor': '💧',
+            'blend': '✨'
+        };
+
+        async function loadBestsellers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/public/${DOMAIN}/products`);
+                const data = await response.json();
+
+                // Filter for bestselling and popular products
+                const bestsellers = (data.products || [])
+                    .filter(p => p.attributes?.badge === 'Bestseller' || p.attributes?.badge === 'Popular')
+                    .slice(0, 3); // Show top 3
+
+                const grid = document.getElementById('bestsellingProducts');
+                if (bestsellers.length === 0) {
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No products available yet.</p>';
+                    return;
+                }
+
+                grid.innerHTML = bestsellers.map(p => {
+                    const icon = productIcons[p.attributes?.type] || '✨';
+                    const badge = p.attributes?.badge || '';
+
+                    return `
+                        <div class="product-card">
+                            ${badge ? `<div class="bestseller">${badge.toUpperCase()}</div>` : ''}
+                            <div class="product-icon">${icon}</div>
+                            <h3>${p.name}</h3>
+                            <p>${p.description || ''}</p>
+                            <div class="price">$${p.base_price.toFixed(2)}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Failed to load bestsellers:', error);
+                document.getElementById('bestsellingProducts').innerHTML = `
+                    <p style="grid-column: 1/-1; text-align: center; color: #666;">
+                        ⚠️ Unable to load products. Please make sure the products API is running.
+                    </p>
+                `;
+            }
+        }
+
+        // Load bestsellers on page load
+        loadBestsellers();
     </script>
     <!-- Auth Module Integration -->
     <script src="auth.js"></script>
