@@ -169,6 +169,27 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
             animation: modalSlideIn 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 2% auto;
+                padding: 2rem 1.5rem;
+                width: 95%;
+                max-height: 95vh;
+            }
+
+            .modal-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .close-modal {
+                right: 1rem;
+                top: 1rem;
+                font-size: 1.5rem;
+            }
         }
 
         @keyframes modalSlideIn {
@@ -468,7 +489,11 @@
         </div>
     </footer>
     <script>
-        const API_URL = 'http://localhost:5000/api';
+        // Use products API for reviews
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:9091'
+            : 'https://api.oilyourhair.com';
+        const DOMAIN = 'oilyourhair.com';
 
         // Sample reviews as fallback
         const initialReviews = [
@@ -558,35 +583,69 @@
         // Load reviews from API
         async function loadReviews() {
             try {
-                const response = await fetch(`${API_URL}/reviews`);
+                const response = await fetch(`${API_BASE_URL}/api/v1/public/${DOMAIN}/reviews`);
                 const data = await response.json();
                 
                 const reviewsGrid = document.querySelector('.reviews-grid');
                 reviewsGrid.innerHTML = ''; // Clear existing reviews
                 
                 if (data.reviews && data.reviews.length > 0) {
-                    data.reviews.forEach(review => {
-                        reviewsGrid.innerHTML += createReviewCard(review);
-                    });
+                    // Filter to show only 5-star reviews
+                    const fiveStarReviews = data.reviews.filter(review => review.rating === 5);
+
+                    if (fiveStarReviews.length > 0) {
+                        fiveStarReviews.forEach(review => {
+                            reviewsGrid.innerHTML += createReviewCard(review);
+                        });
+                    } else {
+                        reviewsGrid.innerHTML = '<p style="text-align: center; color: #666; padding: 2rem;">No 5-star reviews yet. Be the first to leave one!</p>';
+                    }
                 } else {
-                    // If no reviews, load initial sample reviews
+                    // If no reviews, load initial sample reviews (all are 5-star)
                     initialReviews.forEach(review => {
                         reviewsGrid.innerHTML += createReviewCard(review);
                     });
                 }
             } catch (error) {
                 console.error('Error loading reviews:', error);
-                // Load initial reviews as fallback
+                // Load initial 5-star reviews as fallback
                 const reviewsGrid = document.querySelector('.reviews-grid');
                 if (reviewsGrid) {
-                    reviewsGrid.innerHTML = initialReviews.map(review => createReviewCard(review)).join('');
+                    const fiveStarReviews = initialReviews.filter(review => review.rating === 5);
+                    reviewsGrid.innerHTML = fiveStarReviews.map(review => createReviewCard(review)).join('');
                 }
             }
         }
 
         // Add review functionality
         function addReview() {
-            document.getElementById('reviewModal').style.display = 'block';
+            // Check if user is logged in
+            if (typeof currentUser === 'undefined' || !currentUser) {
+                // User is not logged in - show message and redirect to login
+                alert('Please sign in to write a review.');
+                // Optionally trigger login
+                if (typeof login === 'function') {
+                    login();
+                }
+                return;
+            }
+
+            const modal = document.getElementById('reviewModal');
+            const nameInput = document.getElementById('reviewerName');
+
+            // Auto-populate with logged-in user info
+            if (currentUser.first_name) {
+                const fullName = currentUser.first_name + (currentUser.last_name ? ' ' + currentUser.last_name : '');
+                nameInput.value = fullName;
+                nameInput.readOnly = true;
+                nameInput.style.backgroundColor = '#f5f5f5';
+            } else if (currentUser.email) {
+                nameInput.value = currentUser.email.split('@')[0];
+                nameInput.readOnly = true;
+                nameInput.style.backgroundColor = '#f5f5f5';
+            }
+
+            modal.style.display = 'block';
         }
 
         // Initialize event handlers when DOM is ready
@@ -623,7 +682,7 @@
                     };
 
                     try {
-                        const response = await fetch(`${API_URL}/reviews`, {
+                        const response = await fetch(`${API_BASE_URL}/api/v1/public/${DOMAIN}/reviews`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -637,6 +696,9 @@
 
                         // Reset form and close modal
                         this.reset();
+                        const nameInput = document.getElementById('reviewerName');
+                        nameInput.readOnly = false;
+                        nameInput.style.backgroundColor = '';
                         document.getElementById('reviewModal').style.display = 'none';
 
                         // Reload reviews

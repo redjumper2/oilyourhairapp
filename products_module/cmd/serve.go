@@ -88,10 +88,12 @@ func runServer() {
 func setupRoutes(e *echo.Echo, db *database.DB, cfg *config.Config) {
 	// Initialize services
 	productService := services.NewProductService(db)
+	reviewService := services.NewReviewService(db.Database)
+	contactService := services.NewContactService(db.Database)
 
 	// Initialize handlers
 	adminHandler := handlers.NewAdminHandler(productService)
-	publicHandler := handlers.NewPublicHandler(productService)
+	publicHandler := handlers.NewPublicHandler(productService, reviewService, contactService)
 
 	// Initialize middleware
 	apiKeyAuth := middleware.APIKeyMiddleware(cfg)
@@ -116,6 +118,14 @@ func setupRoutes(e *echo.Echo, db *database.DB, cfg *config.Config) {
 	public.GET("/products/search", publicHandler.SearchProducts)
 	public.GET("/promotions", publicHandler.GetPromotions)
 
+	// Reviews endpoints
+	public.POST("/reviews", publicHandler.CreateReview)
+	public.GET("/reviews", publicHandler.ListReviews)
+	public.GET("/reviews/:id", publicHandler.GetReview)
+
+	// Contact form endpoint
+	public.POST("/contact", publicHandler.CreateContact)
+
 	// Admin API (API key required)
 	admin := v1.Group("/products", apiKeyAuth)
 
@@ -133,5 +143,7 @@ func setupRoutes(e *echo.Echo, db *database.DB, cfg *config.Config) {
 
 	log.Println("✅ Routes configured")
 	log.Println("   Public API: /api/v1/public/:domain/products")
+	log.Println("   Public API: /api/v1/public/:domain/reviews")
+	log.Println("   Public API: /api/v1/public/:domain/contact")
 	log.Println("   Admin API: /api/v1/products (requires API key)")
 }

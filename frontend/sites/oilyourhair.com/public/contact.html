@@ -163,7 +163,7 @@
     <main>
         <section class="contact-us">
             <div class="container">
-                <h2>Get in Touch</h2>
+                <h2>Stay in Touch</h2>
                 <p class="intro-text">
                     Have questions, feedback, or just want to say hello? We'd love to hear from you! Fill out the form below or reach us directly using the contact information provided.
                 </p>
@@ -171,7 +171,7 @@
                 <div class="contact-content">
                     <div class="contact-form">
                         <h3>Send us a message</h3>
-                        <form action="#" method="POST"> <!-- Action should point to your server-side script -->
+                        <form id="contactForm" onsubmit="return handleContactSubmit(event)">
                             <label for="name">Your Name</label>
                             <input type="text" id="name" name="name" placeholder="John Doe" required>
 
@@ -184,8 +184,9 @@
                             <label for="message">Your Message</label>
                             <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
 
-                            <button type="submit">Send Message</button>
+                            <button type="submit" id="submitBtn">Send Message</button>
                         </form>
+                        <div id="formMessage" style="margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none;"></div>
                     </div>
 
                     <div class="contact-info">
@@ -257,5 +258,136 @@
     <script src="banner.js?v=1767414826"></script>
     <script src="auth.js?v=1767414826"></script>
     <script src="navigation.js?v=1767414826"></script>
+    <script>
+        // Configuration
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:9091'
+            : 'https://api.oilyourhair.com';
+        const DOMAIN = 'oilyourhair.com';
+
+        // Auto-populate contact form with logged-in user info
+        function populateContactForm() {
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+
+            // Check if user is logged in
+            if (typeof currentUser !== 'undefined' && currentUser) {
+                // Populate name field
+                if (currentUser.first_name) {
+                    const fullName = currentUser.first_name + (currentUser.last_name ? ' ' + currentUser.last_name : '');
+                    nameInput.value = fullName;
+                    nameInput.style.backgroundColor = '#f5f5f5';
+                } else if (currentUser.email) {
+                    // Use email username as fallback
+                    nameInput.value = currentUser.email.split('@')[0];
+                    nameInput.style.backgroundColor = '#f5f5f5';
+                }
+
+                // Populate email field
+                if (currentUser.email) {
+                    emailInput.value = currentUser.email;
+                    emailInput.readOnly = true;
+                    emailInput.style.backgroundColor = '#f5f5f5';
+                    emailInput.style.cursor = 'not-allowed';
+                }
+            }
+        }
+
+        // Wait for both DOM and auth to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try immediately
+            populateContactForm();
+
+            // Also try after a short delay to ensure auth.js has finished
+            setTimeout(populateContactForm, 100);
+            setTimeout(populateContactForm, 500);
+        });
+
+        // Also listen for auth state changes
+        window.addEventListener('authStateChanged', populateContactForm);
+
+        // Handle contact form submission
+        async function handleContactSubmit(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const formMessage = document.getElementById('formMessage');
+            const form = document.getElementById('contactForm');
+
+            // Get form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/public/${DOMAIN}/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success
+                    formMessage.style.display = 'block';
+                    formMessage.style.backgroundColor = '#d4edda';
+                    formMessage.style.color = '#155724';
+                    formMessage.style.border = '1px solid #c3e6cb';
+                    formMessage.textContent = data.message || 'Thank you for contacting us! We\'ll get back to you soon.';
+
+                    // Reset form
+                    form.reset();
+
+                    // Re-populate user info if logged in
+                    if (typeof currentUser !== 'undefined' && currentUser) {
+                        if (currentUser.first_name) {
+                            const fullName = currentUser.first_name + (currentUser.last_name ? ' ' + currentUser.last_name : '');
+                            document.getElementById('name').value = fullName;
+                        } else if (currentUser.email) {
+                            document.getElementById('name').value = currentUser.email.split('@')[0];
+                        }
+                        if (currentUser.email) {
+                            document.getElementById('email').value = currentUser.email;
+                        }
+                    }
+
+                    // Hide message after 5 seconds
+                    setTimeout(() => {
+                        formMessage.style.display = 'none';
+                    }, 5000);
+                } else {
+                    // Error
+                    formMessage.style.display = 'block';
+                    formMessage.style.backgroundColor = '#f8d7da';
+                    formMessage.style.color = '#721c24';
+                    formMessage.style.border = '1px solid #f5c6cb';
+                    formMessage.textContent = data.error || 'Failed to submit contact form. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error submitting contact form:', error);
+                formMessage.style.display = 'block';
+                formMessage.style.backgroundColor = '#f8d7da';
+                formMessage.style.color = '#721c24';
+                formMessage.style.border = '1px solid #f5c6cb';
+                formMessage.textContent = 'An error occurred. Please try again later.';
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
+            }
+
+            return false;
+        }
+    </script>
 </body>
 </html>
