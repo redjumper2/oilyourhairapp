@@ -134,8 +134,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      # Mount for live updates during development
-      - ./frontend/oilyourhair.com/html:/var/www/oilyourhair.com/html:ro
+      # Mount generated site from template system
+      - ./frontend/sites/oilyourhair.com/public:/var/www/oilyourhair.com/html:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/sites-available:/etc/nginx/conf.d:ro
     depends_on:
