@@ -76,6 +76,52 @@
 
 ---
 
+## Embeddable Widgets (Optional - Future Enhancement)
+
+**Goal:** Make features embeddable on multiple domains (e.g., WordPress, Shopify, any website)
+
+### Approach: Web Components + Existing Go API
+
+- [ ] **Create Web Components architecture**
+  - Build custom elements using Lit or vanilla Web Components
+  - Encapsulate styles using Shadow DOM
+  - Single JS bundle for all widgets
+  - CDN hosting for widgets.js
+
+- [ ] **Build embeddable components**
+  - `<oilyourhair-products domain="example.com">`
+  - `<oilyourhair-reviews domain="example.com" product-id="123">`
+  - `<oilyourhair-cart domain="example.com">`
+  - `<oilyourhair-contact domain="example.com">`
+  - `<oilyourhair-auth domain="example.com">`
+
+- [ ] **Update backend for CORS**
+  - Configure CORS to allow embedding domains
+  - Add domain whitelist for security
+  - Handle cross-origin authentication
+  - API key per domain for usage tracking
+
+- [ ] **Create widget configuration**
+  - Admin panel to generate embed codes
+  - Customization options (colors, sizes, features)
+  - Domain registration/whitelisting
+  - Usage analytics per domain
+
+- [ ] **Documentation & Examples**
+  - Embed code generator
+  - Integration guides (WordPress, Shopify, HTML)
+  - Customization documentation
+  - Demo page showing all widgets
+
+### Benefits
+- One-line embed: `<script src="https://widgets.oilyourhair.com/v1/widgets.js"></script>`
+- Works on any website
+- Centralized updates (fix bugs once, all sites benefit)
+- Analytics across all embedded instances
+- Revenue opportunity (charge for widget usage)
+
+---
+
 **Created:** 2026-01-03
-**Priority:** High
+**Priority:** High (Multi-Currency), Medium (Embeddable Widgets)
 **Target:** Next development cycle
