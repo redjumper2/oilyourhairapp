@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OilYourHair - Contact Us</title>
+    <link rel="stylesheet" href="styles.css?v=1767414826">
+    <style>
+        /* All common styles moved to styles.css */
+        /* Contact page-specific styles */
+        .contact-us {
+            padding: 8rem 0 5rem 0;
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+            text-align: center;
+        }
+
+        .contact-us h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--brand-primary, #2E7D32);
+        }
+
+        .contact-us p.intro-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .contact-form, .contact-info {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 300px;
+            max-width: 550px;
+            text-align: left;
+        }
+
+        .contact-form label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: var(--brand-primary, #2E7D32);
+        }
+
+        .contact-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .contact-form button[type="submit"] {
+            background: linear-gradient(45deg, var(--brand-primary, #2E7D32), var(--brand-primary-light, #4CAF50));
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .contact-form button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .contact-info h3 {
+            margin-bottom: 1rem;
+            color: var(--brand-primary, #2E7D32);
+        }
+
+        .contact-info p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .contact-form, .contact-info {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-overlay"></div>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">OilYourHair</a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li> <!-- 'active' class for this page -->
+            </ul>
+            <div class="auth-section">
+                <!-- Login Button (shown when not authenticated) -->
+                <button class="auth-login-btn" onclick="login()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Sign In</span>
+                </button>
+
+                <!-- User Info (shown when authenticated) -->
+                <div class="auth-user-info">
+                    <div class="user-initials"></div>
+                    <span class="user-email-display"></span>
+                    <button class="auth-logout-btn" onclick="logout()" title="Log out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+                <button class="cart-toggle" onclick="toggleCart()">
+                    🛒 Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+        </nav>
+    </header>
+
+    <main>
+        <section class="contact-us">
+            <div class="container">
+                <h2>Get in Touch</h2>
+                <p class="intro-text">
+                    Have questions, feedback, or just want to say hello? We'd love to hear from you! Fill out the form below or reach us directly using the contact information provided.
+                </p>
+
+                <div class="contact-content">
+                    <div class="contact-form">
+                        <h3>Send us a message</h3>
+                        <form action="#" method="POST"> <!-- Action should point to your server-side script -->
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" placeholder="John Doe" required>
+
+                            <label for="email">Your Email</label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" placeholder="Inquiry about products" required>
+
+                            <label for="message">Your Message</label>
+                            <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+
+                            <button type="submit">Send Message</button>
+                        </form>
+                    </div>
+
+                    <div class="contact-info">
+                        <h3>Our Contact Details</h3>
+                        <p><span class="icon">📧</span> <strong>Email:</strong> support@oilyourhair.com</p>
+                        <p><span class="icon">📞</span> <strong>Phone:</strong> +1 (555) 123-4567</p>
+                        <p><span class="icon">📍</span> <strong>Address:</strong> 123 Natural Hair Blvd, Green City, HC 98765</p>
+                        <p><span class="icon">⏰</span> <strong>Hours:</strong> Mon - Fri: 9:00 AM - 5:00 PM EST</p>
+
+                        <div class="social-links">
+                            <a href="#" aria-label="Facebook"><span class="icon">📘</span></a> <!-- Replace with Font Awesome or SVG for better icons -->
+                            <a href="#" aria-label="Instagram"><span class="icon">📸</span></a>
+                            <a href="#" aria-label="Twitter"><span class="icon">🐦</span></a>
+                            <a href="#" aria-label="Pinterest"><span class="icon">📌</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#shipping">Shipping Info</a>
+                <a href="#returns">Returns</a>
+            </div>
+            <p>&copy; 2025 OilYourHair. All rights reserved. | Crafted with love for your hair's journey.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links (won't affect external links like contact.html)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // The product card/mission statement observer is not relevant for this page, so I've removed it.
+        // If you had elements on this page you wanted to animate on scroll, you would apply a similar observer.
+
+        // Note: For a functional contact form, you'll need a backend script (e.g., PHP, Node.js, Python)
+        // to handle the form submission and send the email. The 'action="#"' currently does nothing.
+    </script>
+    <script src="cart.js?v=1767414826"></script>
+    <script src="branding.js?v=1767414826"></script>
+    <script src="banner.js?v=1767414826"></script>
+    <script src="auth.js?v=1767414826"></script>
+    <script src="navigation.js?v=1767414826"></script>
+</body>
+</html>

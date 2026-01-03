@@ -58,6 +58,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, domain string, req m
 		Images:      req.Images,
 		Attributes:  req.Attributes,
 		Variants:    variants,
+		Discount:    req.Discount,
 		Active:      true,
 		CreatedBy:   createdBy,
 		CreatedAt:   time.Now(),
@@ -189,6 +190,9 @@ func (s *ProductService) UpdateProduct(ctx context.Context, domain, productID st
 			}
 		}
 		update["$set"].(bson.M)["variants"] = variants
+	}
+	if req.Discount != nil {
+		update["$set"].(bson.M)["discount"] = req.Discount
 	}
 
 	result, err := s.db.Products.UpdateOne(ctx, bson.M{

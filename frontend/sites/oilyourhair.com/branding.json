@@ -1,0 +1,52 @@
+{
+  "domain": "oilyourhair.com",
+  "brand_name": "OilYourHair",
+  "tagline": "Natural Hair Care Excellence",
+  "colors": {
+    "primary": "#2E7D32",
+    "primary_dark": "#1B5E20",
+    "primary_light": "#4CAF50",
+    "secondary": "#81C784",
+    "accent": "#66BB6A",
+    "background": "#FFFFFF",
+    "text": "#1a1a1a",
+    "text_light": "#666",
+    "border": "#e0e0e0",
+    "success": "#4CAF50",
+    "error": "#F44336",
+    "warning": "#FF9800"
+  },
+  "typography": {
+    "font_family": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+    "heading_font": "inherit",
+    "h1_size": "2.5rem",
+    "h2_size": "2rem",
+    "h3_size": "1.5rem",
+    "body_size": "1rem",
+    "small_size": "0.875rem"
+  },
+  "layout": {
+    "max_width": "1400px",
+    "border_radius": "10px",
+    "card_shadow": "0 4px 6px rgba(0,0,0,0.1)",
+    "spacing": {
+      "xs": "0.5rem",
+      "sm": "1rem",
+      "md": "1.5rem",
+      "lg": "2rem",
+      "xl": "3rem"
+    }
+  },
+  "logo": {
+    "text": "🌿 OilYourHair",
+    "url": "",
+    "height": "40px"
+  },
+  "navigation": {
+    "links": [
+      {"label": "Shop", "url": "/shop.html"},
+      {"label": "About", "url": "#about"},
+      {"label": "Contact", "url": "#contact"}
+    ]
+  }
+}

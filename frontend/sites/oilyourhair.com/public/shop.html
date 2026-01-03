@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - OilYourHair</title>
+    <link rel="stylesheet" href="styles.css?v=1767414826">
+    <style>
+        /* Common styles (header, nav, banner, etc.) are in styles.css */
+        /* Shop-specific styles below */
+
+        .cart-toggle {
+            background: linear-gradient(45deg, #2E7D32, #4CAF50); color: white;
+            border: none; padding: 0.75rem 1.5rem; border-radius: 25px;
+            cursor: pointer; font-weight: bold; position: relative;
+        }
+        
+        .cart-count {
+            position: absolute; top: -8px; right: -8px; background: #ff4444;
+            color: white; border-radius: 50%; width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: bold;
+        }
+        
+        /* Hero */
+        .hero {
+            height: 40vh; background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; margin-top: 80px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem; margin-bottom: 1rem;
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        
+        /* Allbirds-Style Filters */
+        .filters {
+            padding: 1.5rem 0;
+            background: white;
+            border-bottom: 1px solid #e8e8e8;
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+        }
+
+        .filters-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Filter Button (replaces select dropdowns) */
+        .filter-button {
+            padding: 0.625rem 1.25rem;
+            background: white;
+            border: 1px solid #d0d0d0;
+            border-radius: 24px;
+            font-size: 0.9375rem;
+            font-weight: 400;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .filter-button:hover {
+            border-color: #999;
+            background: #fafafa;
+        }
+
+        .filter-button.active {
+            background: #212121;
+            color: white;
+            border-color: #212121;
+        }
+
+        .filter-button svg {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .filter-button.open svg {
+            transform: rotate(180deg);
+        }
+
+        /* Filter Dropdown */
+        .filter-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0.75rem;
+            min-width: 220px;
+            max-width: 280px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .filter-dropdown.show {
+            display: block;
+        }
+
+        /* Checkbox Filter Option (Multi-select) */
+        .filter-option {
+            padding: 0.625rem 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9375rem;
+            transition: background 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            user-select: none;
+        }
+
+        .filter-option:hover:not(.disabled) {
+            background: #f5f5f5;
+        }
+
+        .filter-option.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Custom Checkbox */
+        .filter-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #d0d0d0;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .filter-option.checked .filter-checkbox {
+            background: #212121;
+            border-color: #212121;
+        }
+
+        .filter-option.checked .filter-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .filter-option.disabled .filter-checkbox {
+            border-color: #e0e0e0;
+            background: #f5f5f5;
+        }
+
+        /* Radio Filter Option (Single-select for price) */
+        .filter-option.radio {
+            gap: 0.5rem;
+        }
+
+        .filter-radio {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #d0d0d0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .filter-option.checked .filter-radio {
+            border-color: #212121;
+        }
+
+        .filter-option.checked .filter-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #212121;
+            border-radius: 50%;
+        }
+
+        .filter-option.disabled .filter-radio {
+            border-color: #e0e0e0;
+        }
+
+        /* Active Filter Chips */
+        .active-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .active-filters:empty {
+            display: none;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: #f5f5f5;
+            border-radius: 16px;
+            font-size: 0.875rem;
+            color: #333;
+        }
+
+        .filter-chip-remove {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 1.125rem;
+            line-height: 1;
+        }
+
+        .filter-chip-remove:hover {
+            color: #000;
+        }
+
+        .clear-all-filters {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 0.875rem;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .clear-all-filters:hover {
+            color: #000;
+        }
+        
+        /* Products */
+        .products { padding: 4rem 0; background: #fafafa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        
+        .products-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem; margin-top: 2rem;
+        }
+        
+        /* Allbirds-Inspired Product Cards */
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+            border-color: #e0e0e0;
+        }
+
+        .product-image {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            background: #f8f8f8;
+        }
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        /* Sale/Discount Badge */
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #d32f2f;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Bestseller Badge (different position) */
+        .product-badge.bestseller {
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            top: 12px;
+            left: 12px;
+            right: auto;
+        }
+
+        .product-info {
+            padding: 1.25rem;
+        }
+        .product-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #212121;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            min-height: 2.8rem;
+        }
+        .product-description {
+            color: #757575;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .product-features {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .feature-tag {
+            background: #f1f8e9;
+            color: #2E7D32;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Pricing with Discount Support */
+        .product-price {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+        }
+        .price-current {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #212121;
+        }
+        .price-original {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #9e9e9e;
+            text-decoration: line-through;
+        }
+        .price-discount {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #d32f2f;
+        }
+
+        /* Allbirds-Style Actions */
+        .product-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .add-to-cart {
+            flex: 1;
+            background: var(--brand-primary, #2E7D32);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.25rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .add-to-cart:hover {
+            background: var(--brand-primary-dark, #1B5E20);
+            transform: translateY(-1px);
+        }
+        .add-to-cart:active {
+            transform: translateY(0);
+        }
+
+        .quick-view {
+            background: white;
+            border: 1.5px solid #e0e0e0;
+            color: #616161;
+            padding: 0.875rem 1.25rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quick-view:hover {
+            border-color: var(--brand-primary, #2E7D32);
+            color: var(--brand-primary, #2E7D32);
+        }
+
+        /* Variant Selector Component */
+        .variant-selector {
+            margin: 1.5rem 0;
+            padding: 1.25rem;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .variant-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .variant-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .variant-label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #424242;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .variant-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .variant-option {
+            padding: 0.625rem 1rem;
+            border: 1.5px solid #d0d0d0;
+            background: white;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #424242;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .variant-option:hover:not(:disabled) {
+            border-color: var(--brand-primary, #2E7D32);
+            color: var(--brand-primary, #2E7D32);
+        }
+
+        .variant-option.selected {
+            background: var(--brand-primary, #2E7D32);
+            border-color: var(--brand-primary, #2E7D32);
+            color: white;
+        }
+
+        .variant-option.unavailable {
+            background: #f5f5f5;
+            color: #bdbdbd;
+            border-color: #e0e0e0;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .variant-option.unavailable::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 1px;
+            background: #bdbdbd;
+            transform: rotate(-15deg);
+        }
+
+        .variant-info {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.875rem;
+        }
+
+        .variant-sku {
+            color: #757575;
+            margin-bottom: 0.5rem;
+        }
+
+        .variant-stock {
+            margin-bottom: 0.5rem;
+        }
+
+        .stock-available {
+            color: #4caf50;
+            font-weight: 600;
+        }
+
+        .stock-unavailable {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .variant-price {
+            color: #212121;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed; top: 0; right: -400px; width: 400px; height: 100vh;
+            background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 2000; transition: right 0.3s ease; overflow-y: auto;
+        }
+        .cart-sidebar.open { right: 0; }
+        
+        .cart-header {
+            padding: 2rem; border-bottom: 1px solid #eee;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .cart-header h2 { color: #2E7D32; font-size: 1.5rem; }
+        .close-cart {
+            background: none; border: none; font-size: 1.5rem;
+            cursor: pointer; color: #666; padding: 0.5rem; border-radius: 50%;
+        }
+        
+        .cart-items { padding: 1rem; }
+        .cart-item {
+            display: flex; gap: 1rem; padding: 1rem; border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 10px; }
+        .cart-item-info { flex: 1; }
+        .cart-item-title { font-weight: bold; color: #2E7D32; margin-bottom: 0.5rem; }
+        .cart-item-price { color: #666; font-size: 0.9rem; }
+        
+        .quantity-controls {
+            display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;
+        }
+        .quantity-btn {
+            background: #f5f5f5; border: none; width: 30px; height: 30px;
+            border-radius: 50%; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .quantity { font-weight: bold; min-width: 30px; text-align: center; }
+        .remove-item {
+            background: #ff4444; color: white; border: none; padding: 0.5rem;
+            border-radius: 5px; cursor: pointer; font-size: 0.8rem;
+        }
+        
+        .cart-summary { padding: 2rem; border-top: 1px solid #eee; background: #fafafa; }
+        .cart-total {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1rem; font-size: 1.2rem; font-weight: bold; color: #2E7D32;
+        }
+        .checkout-btn {
+            width: 100%; background: linear-gradient(45deg, #2E7D32, #4CAF50);
+            color: white; border: none; padding: 1rem; border-radius: 10px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+        }
+        
+        .empty-cart { text-align: center; padding: 3rem 2rem; color: #666; }
+        .empty-cart h3 { margin-bottom: 1rem; color: #2E7D32; }
+        
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1500; opacity: 0;
+            visibility: hidden; transition: all 0.3s ease;
+        }
+        .overlay.active { opacity: 1; visibility: visible; }
+        
+        /* Footer */
+        footer {
+            background: #333; color: white; text-align: center; padding: 3rem 0;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+        .footer-links a { color: white; text-decoration: none; }
+        .footer-links a:hover { color: #4CAF50; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .filters-container { flex-direction: column; align-items: stretch; }
+            .search-box { width: 100%; }
+            .products-grid { grid-template-columns: 1fr; }
+            .cart-sidebar { width: 100%; right: -100%; }
+            .product-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-overlay"></div>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">OilYourHair</a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html" class="active">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-section">
+                <!-- Login Button (shown when not authenticated) -->
+                <button class="auth-login-btn" onclick="login()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Sign In</span>
+                </button>
+
+                <!-- User Info (shown when authenticated) -->
+                <div class="auth-user-info">
+                    <div class="user-initials"></div>
+                    <span class="user-email-display"></span>
+                    <button class="auth-logout-btn" onclick="logout()" title="Log out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <button class="cart-toggle" onclick="toggleCart()">
+                    🛒 Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Premium Hair Oils</h1>
+            <p>Transform your hair with nature's finest ingredients</p>
+        </div>
+    </section>
+
+    <section class="filters">
+        <div class="filters-container">
+            <div class="filter-bar">
+                <!-- Hair Type Filter (Multi-select) -->
+                <div class="filter-group-button">
+                    <button class="filter-button" onclick="toggleFilterDropdown('hairType')">
+                        <span id="hairTypeLabel">Hair Type</span>
+                        <svg viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 9L1 4h10z"/>
+                        </svg>
+                    </button>
+                    <div class="filter-dropdown" id="hairTypeDropdown">
+                        <div class="filter-option" data-value="dry" onclick="toggleCheckboxFilter('hairType', 'dry', 'Dry Hair', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Dry Hair</span>
+                        </div>
+                        <div class="filter-option" data-value="oily" onclick="toggleCheckboxFilter('hairType', 'oily', 'Oily Hair', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Oily Hair</span>
+                        </div>
+                        <div class="filter-option" data-value="normal" onclick="toggleCheckboxFilter('hairType', 'normal', 'Normal Hair', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Normal Hair</span>
+                        </div>
+                        <div class="filter-option" data-value="curly" onclick="toggleCheckboxFilter('hairType', 'curly', 'Curly Hair', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Curly Hair</span>
+                        </div>
+                        <div class="filter-option" data-value="damaged" onclick="toggleCheckboxFilter('hairType', 'damaged', 'Damaged Hair', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Damaged Hair</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Range Filter (Single-select with graying) -->
+                <div class="filter-group-button">
+                    <button class="filter-button" onclick="toggleFilterDropdown('priceRange')">
+                        <span id="priceRangeLabel">Price</span>
+                        <svg viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 9L1 4h10z"/>
+                        </svg>
+                    </button>
+                    <div class="filter-dropdown" id="priceRangeDropdown">
+                        <div class="filter-option radio" data-value="0-25" data-max="25" onclick="selectPriceFilter('0-25', '$0 - $25', 0, 25)">
+                            <div class="filter-radio"></div>
+                            <span>$0 - $25</span>
+                        </div>
+                        <div class="filter-option radio" data-value="25-50" data-min="25" data-max="50" onclick="selectPriceFilter('25-50', '$25 - $50', 25, 50)">
+                            <div class="filter-radio"></div>
+                            <span>$25 - $50</span>
+                        </div>
+                        <div class="filter-option radio" data-value="50-75" data-min="50" data-max="75" onclick="selectPriceFilter('50-75', '$50 - $75', 50, 75)">
+                            <div class="filter-radio"></div>
+                            <span>$50 - $75</span>
+                        </div>
+                        <div class="filter-option radio" data-value="75-100" data-min="75" data-max="100" onclick="selectPriceFilter('75-100', '$75 - $100', 75, 100)">
+                            <div class="filter-radio"></div>
+                            <span>$75 - $100</span>
+                        </div>
+                        <div class="filter-option radio" data-value="100+" data-min="100" onclick="selectPriceFilter('100+', '$100+', 100, 999999)">
+                            <div class="filter-radio"></div>
+                            <span>$100+</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredient Filter (Multi-select) -->
+                <div class="filter-group-button">
+                    <button class="filter-button" onclick="toggleFilterDropdown('ingredients')">
+                        <span id="ingredientsLabel">Ingredient</span>
+                        <svg viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 9L1 4h10z"/>
+                        </svg>
+                    </button>
+                    <div class="filter-dropdown" id="ingredientsDropdown">
+                        <div class="filter-option" data-value="argan" onclick="toggleCheckboxFilter('ingredients', 'argan', 'Argan Oil', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Argan Oil</span>
+                        </div>
+                        <div class="filter-option" data-value="coconut" onclick="toggleCheckboxFilter('ingredients', 'coconut', 'Coconut Oil', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Coconut Oil</span>
+                        </div>
+                        <div class="filter-option" data-value="jojoba" onclick="toggleCheckboxFilter('ingredients', 'jojoba', 'Jojoba Oil', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Jojoba Oil</span>
+                        </div>
+                        <div class="filter-option" data-value="castor" onclick="toggleCheckboxFilter('ingredients', 'castor', 'Castor Oil', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Castor Oil</span>
+                        </div>
+                        <div class="filter-option" data-value="rosemary" onclick="toggleCheckboxFilter('ingredients', 'rosemary', 'Rosemary Oil', event)">
+                            <div class="filter-checkbox"></div>
+                            <span>Rosemary Oil</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Filters Chips -->
+            <div class="active-filters" id="activeFilters"></div>
+        </div>
+    </section>
+
+    <section class="products">
+        <div class="container">
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </section>
+
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-cart" onclick="toggleCart()">×</button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-summary" id="cartSummary"></div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Shipping Info</a>
+            <a href="#">Returns</a>
+        </div>
+        <p>&copy; 2025 OilYourHair. All rights reserved. | Crafted with love for your hair's journey.</p>
+    </footer>
+
+    <script>
+        // Products Module API Integration
+        // Use local API in development, public API in production
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:9091'
+            : 'https://api.oilyourhair.com';
+        const DOMAIN = 'oilyourhair.com';
+
+        let products = [];
+        // cart is declared globally in cart.js
+        let filteredProducts = [];
+
+        // Fetch products from API
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/public/${DOMAIN}/products`);
+                const data = await response.json();
+
+                // Map API response to frontend format
+                products = (data.products || []).map(p => {
+                    // Calculate discount if active
+                    const hasDiscount = p.discount && p.discount.active;
+                    let discountedPrice = p.base_price;
+                    let discountPercent = 0;
+
+                    if (hasDiscount) {
+                        if (p.discount.type === 'percentage') {
+                            discountedPrice = p.base_price * (1 - p.discount.value / 100);
+                            discountPercent = p.discount.value;
+                        } else if (p.discount.type === 'fixed') {
+                            discountedPrice = Math.max(0, p.base_price - p.discount.value);
+                            discountPercent = Math.round((p.discount.value / p.base_price) * 100);
+                        }
+                    }
+
+                    return {
+                        id: p.id,
+                        name: p.name,
+                        price: p.base_price,
+                        discountedPrice: hasDiscount ? discountedPrice : null,
+                        discountPercent: discountPercent,
+                        image: p.images && p.images[0] ? p.images[0] : 'https://via.placeholder.com/400x400?text=No+Image',
+                        description: p.description || '',
+                        features: p.attributes?.features ? p.attributes.features.split(',') : [],
+                        hairType: p.attributes?.hair_type ? p.attributes.hair_type.split(',') : [],
+                        ingredient: p.attributes?.type || '',
+                        badge: p.attributes?.badge || '',
+                        hasDiscount: hasDiscount
+                    };
+                });
+
+                filteredProducts = [...products];
+                loadProducts();
+            } catch (error) {
+                console.error('Failed to load products:', error);
+                // Show error message to user
+                document.getElementById('productsGrid').innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                        <p style="color: #666; font-size: 1.2rem;">⚠️ Unable to load products. Please make sure the products API is running.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function loadProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = filteredProducts.map(p => {
+                // Price display logic
+                let priceHTML = '';
+                if (p.hasDiscount) {
+                    priceHTML = `
+                        <div class="product-price">
+                            <span class="price-current">$${p.discountedPrice.toFixed(2)}</span>
+                            <span class="price-original">$${p.price.toFixed(2)}</span>
+                            <span class="price-discount">-${p.discountPercent}%</span>
+                        </div>
+                    `;
+                } else {
+                    priceHTML = `
+                        <div class="product-price">
+                            <span class="price-current">$${p.price.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+
+                // Badges logic - show both discount and category badges
+                let badgesHTML = '';
+                if (p.hasDiscount && p.discountPercent > 0) {
+                    badgesHTML += `<div class="product-badge">${p.discountPercent}% OFF</div>`;
+                }
+                if (p.badge && p.badge.toLowerCase() !== 'none') {
+                    badgesHTML += `<div class="product-badge bestseller">${p.badge}</div>`;
+                }
+
+                return `
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="${p.image}" alt="${p.name}">
+                            ${badgesHTML}
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">${p.name}</h3>
+                            <p class="product-description">${p.description}</p>
+                            <div class="product-features">
+                                ${p.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                            </div>
+                            ${priceHTML}
+                            <div class="product-actions">
+                                <button class="add-to-cart" onclick="addToCart('${p.id}')">Add to Cart</button>
+                                <button class="quick-view" onclick="quickView('${p.id}')">Quick View</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+
+            if (existing) existing.quantity += 1;
+            else {
+                // Use discounted price if available
+                const finalPrice = product.hasDiscount ? product.discountedPrice : product.price;
+                cart.push({
+                    ...product,
+                    finalPrice: finalPrice,
+                    quantity: 1
+                });
+            }
+
+            saveCart(); // Persist to localStorage
+            updateCartUI();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            saveCart(); // Persist to localStorage
+            updateCartUI();
+        }
+
+        function updateQuantity(id, change) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) removeFromCart(id);
+                else {
+                    saveCart(); // Persist to localStorage
+                    updateCartUI();
+                }
+            }
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+
+            const cartItems = document.getElementById('cartItems');
+            const cartSummary = document.getElementById('cartSummary');
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart"><h3>Your cart is empty</h3><p>Add some amazing hair oils to get started!</p></div>';
+                cartSummary.innerHTML = '';
+            } else {
+                cartItems.innerHTML = cart.map(item => {
+                    const displayPrice = item.finalPrice || item.price;
+                    const priceDisplay = item.hasDiscount
+                        ? `<div class="cart-item-price">$${displayPrice.toFixed(2)} <span style="text-decoration: line-through; color: #999; font-size: 0.85em; margin-left: 0.5rem;">$${item.price.toFixed(2)}</span></div>`
+                        : `<div class="cart-item-price">$${displayPrice.toFixed(2)}</div>`;
+
+                    return `
+                        <div class="cart-item">
+                            <img src="${item.image}" alt="${item.name}">
+                            <div class="cart-item-info">
+                                <div class="cart-item-title">${item.name}</div>
+                                ${priceDisplay}
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
+                                    <span class="quantity">${item.quantity}</span>
+                                    <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                                </div>
+                            </div>
+                            <button class="remove-item" onclick="removeFromCart('${item.id}')">Remove</button>
+                        </div>
+                    `;
+                }).join('');
+
+                const total = cart.reduce((sum, item) => {
+                    const itemPrice = item.finalPrice || item.price;
+                    return sum + (itemPrice * item.quantity);
+                }, 0);
+                cartSummary.innerHTML = `
+                    <div class="cart-total"><span>Total: $${total.toFixed(2)}</span></div>
+                    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+                `;
+            }
+        }
+
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        // Filter state (multi-select for hairType and ingredients)
+        let activeFilters = {
+            hairType: [], // Array for multi-select
+            priceRange: { value: '', label: 'Price', min: 0, max: 999999 },
+            ingredients: [] // Array for multi-select
+        };
+
+        // Toggle filter dropdown
+        function toggleFilterDropdown(filterName) {
+            const dropdown = document.getElementById(filterName + 'Dropdown');
+            const button = dropdown.previousElementSibling;
+            const allDropdowns = document.querySelectorAll('.filter-dropdown');
+            const allButtons = document.querySelectorAll('.filter-button');
+
+            // Close other dropdowns
+            allDropdowns.forEach(d => {
+                if (d !== dropdown) d.classList.remove('show');
+            });
+            allButtons.forEach(b => {
+                if (b !== button) b.classList.remove('open');
+            });
+
+            // Toggle this dropdown
+            dropdown.classList.toggle('show');
+            button.classList.toggle('open');
+        }
+
+        // Toggle checkbox filter (multi-select)
+        function toggleCheckboxFilter(filterName, value, label, event) {
+            event.stopPropagation();
+            const option = event.currentTarget;
+
+            // Toggle selection
+            const index = activeFilters[filterName].findIndex(f => f.value === value);
+            if (index > -1) {
+                // Uncheck
+                activeFilters[filterName].splice(index, 1);
+                option.classList.remove('checked');
+            } else {
+                // Check
+                activeFilters[filterName].push({ value, label });
+                option.classList.add('checked');
+            }
+
+            // Update button label
+            updateFilterButtonLabel(filterName);
+
+            // Update active filter chips
+            updateActiveFilterChips();
+
+            // Apply filters (keep dropdown open for multi-select)
+            filterProducts();
+        }
+
+        // Select price filter (single-select with graying)
+        function selectPriceFilter(value, label, min, max) {
+            const dropdown = document.getElementById('priceRangeDropdown');
+            const button = dropdown.previousElementSibling;
+
+            // Update active price filter
+            activeFilters.priceRange = { value, label, min, max };
+
+            // Update button label and state
+            document.getElementById('priceRangeLabel').textContent = label;
+            button.classList.add('active');
+
+            // Update selected option styling and enable/disable incompatible options
+            dropdown.querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('checked');
+                opt.classList.remove('disabled');
+
+                if (opt.dataset.value === value) {
+                    opt.classList.add('checked');
+                } else {
+                    // Gray out incompatible price ranges
+                    const optMin = parseInt(opt.dataset.min) || 0;
+                    const optMax = parseInt(opt.dataset.max) || 999999;
+
+                    // Disable if ranges don't overlap
+                    if (optMax <= min || optMin >= max) {
+                        opt.classList.add('disabled');
+                    }
+                }
+            });
+
+            // Close dropdown
+            dropdown.classList.remove('show');
+            button.classList.remove('open');
+
+            // Update active filter chips
+            updateActiveFilterChips();
+
+            // Apply filters
+            filterProducts();
+        }
+
+        // Update filter button label for multi-select
+        function updateFilterButtonLabel(filterName) {
+            const button = document.getElementById(filterName + 'Dropdown').previousElementSibling;
+            const count = activeFilters[filterName].length;
+
+            const labels = {
+                hairType: 'Hair Type',
+                ingredients: 'Ingredient'
+            };
+
+            if (count === 0) {
+                document.getElementById(filterName + 'Label').textContent = labels[filterName];
+                button.classList.remove('active');
+            } else if (count === 1) {
+                document.getElementById(filterName + 'Label').textContent = activeFilters[filterName][0].label;
+                button.classList.add('active');
+            } else {
+                document.getElementById(filterName + 'Label').textContent = `${labels[filterName]} (${count})`;
+                button.classList.add('active');
+            }
+        }
+
+        // Update active filter chips
+        function updateActiveFilterChips() {
+            const container = document.getElementById('activeFilters');
+            const chips = [];
+
+            // Add chips for multi-select filters
+            ['hairType', 'ingredients'].forEach(key => {
+                activeFilters[key].forEach(filter => {
+                    chips.push(`
+                        <div class="filter-chip">
+                            <span>${filter.label}</span>
+                            <button class="filter-chip-remove" onclick="removeMultiFilter('${key}', '${filter.value}')" aria-label="Remove ${filter.label}">
+                                ×
+                            </button>
+                        </div>
+                    `);
+                });
+            });
+
+            // Add chip for price filter
+            if (activeFilters.priceRange.value) {
+                chips.push(`
+                    <div class="filter-chip">
+                        <span>${activeFilters.priceRange.label}</span>
+                        <button class="filter-chip-remove" onclick="removePriceFilter()" aria-label="Remove ${activeFilters.priceRange.label}">
+                            ×
+                        </button>
+                    </div>
+                `);
+            }
+
+            if (chips.length > 0) {
+                chips.push(`
+                    <button class="clear-all-filters" onclick="clearAllFilters()">
+                        Clear all
+                    </button>
+                `);
+            }
+
+            container.innerHTML = chips.join('');
+        }
+
+        // Remove a specific multi-select filter
+        function removeMultiFilter(filterName, value) {
+            const index = activeFilters[filterName].findIndex(f => f.value === value);
+            if (index > -1) {
+                activeFilters[filterName].splice(index, 1);
+            }
+
+            // Update UI
+            const dropdown = document.getElementById(filterName + 'Dropdown');
+            dropdown.querySelectorAll('.filter-option').forEach(opt => {
+                if (opt.dataset.value === value) {
+                    opt.classList.remove('checked');
+                }
+            });
+
+            updateFilterButtonLabel(filterName);
+            updateActiveFilterChips();
+            filterProducts();
+        }
+
+        // Remove price filter
+        function removePriceFilter() {
+            activeFilters.priceRange = { value: '', label: 'Price', min: 0, max: 999999 };
+
+            // Update UI
+            const dropdown = document.getElementById('priceRangeDropdown');
+            const button = dropdown.previousElementSibling;
+
+            dropdown.querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('checked');
+                opt.classList.remove('disabled');
+            });
+
+            document.getElementById('priceRangeLabel').textContent = 'Price';
+            button.classList.remove('active');
+
+            updateActiveFilterChips();
+            filterProducts();
+        }
+
+        // Clear all filters
+        function clearAllFilters() {
+            // Clear multi-select filters
+            activeFilters.hairType = [];
+            activeFilters.ingredients = [];
+
+            // Clear price filter
+            removePriceFilter();
+
+            // Update all dropdowns
+            document.querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('checked');
+                opt.classList.remove('disabled');
+            });
+
+            // Update button labels
+            updateFilterButtonLabel('hairType');
+            updateFilterButtonLabel('ingredients');
+
+            updateActiveFilterChips();
+            filterProducts();
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.filter-group-button')) {
+                document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('show'));
+                document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('open'));
+            }
+        });
+
+        function filterProducts() {
+            // Extract filter values
+            const hairTypes = activeFilters.hairType.map(f => f.value);
+            const ingredients = activeFilters.ingredients.map(f => f.value);
+            const { min, max, value: priceValue } = activeFilters.priceRange;
+
+            filteredProducts = products.filter(p => {
+                // Multi-select: match if any selected hair type matches (OR logic within category)
+                const matchesHair = hairTypes.length === 0 ||
+                    hairTypes.some(type => p.attributes?.hair_type === type || p.hairType?.includes(type));
+
+                // Price filter: check if product price is within selected range
+                const productPrice = p.finalPrice || p.base_price || p.price;
+                const matchesPrice = !priceValue || (productPrice >= min && productPrice <= max);
+
+                // Multi-select: match if any selected ingredient matches (OR logic within category)
+                const matchesIngredient = ingredients.length === 0 ||
+                    ingredients.some(ing => p.attributes?.ingredient === ing || p.ingredient === ing);
+
+                return matchesHair && matchesPrice && matchesIngredient;
+            });
+
+            loadProducts();
+        }
+
+        function searchProducts() { filterProducts(); }
+
+        function quickView(id) {
+            const product = products.find(p => p.id === id);
+            alert(`${product.name}\n\n${product.description}\n\nPrice: $${product.price}\nFeatures: ${product.features.join(', ')}`);
+        }
+
+        function checkout() {
+            alert('Redirecting to checkout...');
+        }
+
+        // Initialize after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                fetchProducts();
+                updateCartUI();
+            });
+        } else {
+            fetchProducts();
+            updateCartUI();
+        }
+    </script>
+
+    <!-- Branding System -->
+    <script src="cart.js?v=1767414826"></script>
+    <script src="branding.js?v=1767414826"></script>
+    <!-- Promotion Banner -->
+    <script src="banner.js?v=1767414826"></script>
+    <!-- Auth Module Integration -->
+    <script src="auth.js?v=1767414826"></script>
+    <script src="navigation.js?v=1767414826"></script>
+</body>
+</html>

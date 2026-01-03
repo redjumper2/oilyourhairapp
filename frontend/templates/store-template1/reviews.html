@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - OilYourHair</title>
+    <link rel="stylesheet" href="styles.css?v=1767414826">
+    <style>
+        /* All common styles moved to styles.css */
+        /* Reviews page-specific styles */
+        main {
+            padding: 12rem 0 5rem 0;
+        }
+
+        .page-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding: 6rem 0 2rem 0;
+            margin-top: 80px;
+        }
+
+        .page-hero h1 {
+            font-size: 3.5rem;
+            color: var(--brand-primary, #2E7D32);
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .page-hero .subtitle {
+            font-size: 1.25rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .review-stats {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .star-rating {
+            color: #ffd700;
+            font-size: 1.5rem;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--brand-primary-light, #4CAF50);
+        }
+
+        .review-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .reviewer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .reviewer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--brand-primary, #2E7D32), var(--brand-primary-light, #4CAF50));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .reviewer-info h3 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .reviewer-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .review-date {
+            color: #888;
+        }
+
+        .review-rating {
+            color: #ffd700;
+        }
+
+        .review-content {
+            margin-bottom: 1rem;
+        }
+
+        .review-text {
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+
+        .review-highlight {
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            font-style: italic;
+            color: var(--brand-primary, #2E7D32);
+            margin-top: 1rem;
+        }
+
+        .review-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+
+        .review-product {
+            color: var(--brand-primary, #2E7D32);
+            font-weight: 600;
+        }
+
+        .review-helpful {
+            color: #888;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 3rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            color: #aaa;
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: var(--brand-primary, #2E7D32);
+        }
+
+        .modal-content h2 {
+            color: var(--brand-primary, #2E7D32);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--brand-primary, #2E7D32);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Star Rating Input */
+        .star-rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .star-rating-input input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating-input label {
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s;
+            margin: 0;
+        }
+
+        .star-rating-input label:hover,
+        .star-rating-input label:hover ~ label,
+        .star-rating-input input[type="radio"]:checked ~ label {
+            color: #ffd700;
+        }
+
+        .submit-review {
+            background: linear-gradient(45deg, var(--brand-primary, #2E7D32), var(--brand-primary-light, #4CAF50));
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+            width: 100%;
+        }
+
+        .submit-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        /* Add Review Button */
+        .add-review-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--brand-primary, #2E7D32), var(--brand-primary-light, #4CAF50));
+            color: white;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .add-review-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(46, 125, 50, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-overlay"></div>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">OilYourHair</a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html" class="active">Reviews</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-section">
+                <!-- Login Button (shown when not authenticated) -->
+                <button class="auth-login-btn" onclick="login()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Sign In</span>
+                </button>
+
+                <!-- User Info (shown when authenticated) -->
+                <div class="auth-user-info">
+                    <div class="user-initials"></div>
+                    <span class="user-email-display"></span>
+                    <button class="auth-logout-btn" onclick="logout()" title="Log out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+                <button class="cart-toggle" onclick="toggleCart()">
+                    🛒 Cart
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-hero">
+            <h1>Customer Reviews</h1>
+            <p class="subtitle">Real Stories from Our Hair Care Community</p>
+            <p class="description">Discover authentic experiences and transformations from customers who have embraced the power of natural hair care with OilYourHair's premium, ethically-sourced products.</p>
+        </div>
+
+        <section class="stats-section">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-subtitle">Join thousands of satisfied customers who have transformed their hair care routine with our natural oils and treatments.</p>
+            
+            <div class="review-stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">4.8</span>
+                        <div class="star-rating">★★★★★</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">1,247</span>
+                        <div class="stat-label">Total Reviews</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">96%</span>
+                        <div class="stat-label">Recommend Us</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">98%</span>
+                        <div class="stat-label">Satisfied Customers</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-section">
+            <h2 class="section-title">Featured Reviews</h2>
+            <p class="section-subtitle">Read what our customers are saying about their natural hair transformation journey.</p>
+
+            <div class="reviews-grid">
+                <!-- Existing review cards will be here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Write Your Review</h2>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label for="reviewerName">Your Name</label>
+                    <input type="text" id="reviewerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Rating</label>
+                    <div class="star-rating-input">
+                        <input type="radio" id="star5" name="rating" value="5" required>
+                        <label for="star5">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1">★</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productSelect">Product</label>
+                    <select id="productSelect" required>
+                        <option value="">Select a product</option>
+                        <option value="Nourishing Hair Oil">Nourishing Hair Oil</option>
+                        <option value="Curl Defining Serum">Curl Defining Serum</option>
+                        <option value="Repair Treatment Oil">Repair Treatment Oil</option>
+                        <option value="Daily Moisture Oil">Daily Moisture Oil</option>
+                        <option value="Shine & Strength Formula">Shine & Strength Formula</option>
+                        <option value="Complete Hair Care Set">Complete Hair Care Set</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewText">Your Review</label>
+                    <textarea id="reviewText" rows="4" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewHighlight">Highlight (Optional)</label>
+                    <input type="text" id="reviewHighlight" placeholder="Share your key takeaway">
+                </div>
+
+                <button type="submit" class="submit-review">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <button class="add-review-btn" onclick="addReview()" title="Add Your Review">+</button>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+                <a href="#shipping">Shipping Info</a>
+                <a href="#returns">Returns</a>
+            </div>
+            <p>&copy; 2025 OilYourHair. All rights reserved. Nourish Your Crown - Transform Your Hair.</p>
+        </div>
+    </footer>
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        // Sample reviews as fallback
+        const initialReviews = [
+            {
+                name: "Sarah Johnson",
+                rating: 5,
+                date: "2024-12-15",
+                text: "Absolutely love this argan oil! My hair has never been softer or shinier. It's completely transformed my dry, damaged hair into healthy, vibrant locks.",
+                highlight: "Best hair product I've ever used!",
+                product: "Nourishing Hair Oil",
+                helpfulCount: 24
+            },
+            {
+                name: "Michael Chen",
+                rating: 5,
+                date: "2024-12-10",
+                text: "As someone with curly hair, I've struggled to find products that work. This curl defining serum is a game-changer! My curls are defined, bouncy, and frizz-free all day.",
+                highlight: "Perfect for curly hair!",
+                product: "Curl Defining Serum",
+                helpfulCount: 18
+            },
+            {
+                name: "Emily Rodriguez",
+                rating: 4,
+                date: "2024-12-08",
+                text: "Great product! I've been using it for a month and can already see improvement in my hair's texture and shine. The only reason it's not 5 stars is the price, but the quality justifies it.",
+                product: "Daily Moisture Oil",
+                helpfulCount: 12
+            },
+            {
+                name: "David Thompson",
+                rating: 5,
+                date: "2024-12-05",
+                text: "My wife introduced me to these products and I'm hooked! The repair treatment oil has done wonders for my thinning hair. It feels thicker and healthier.",
+                highlight: "Great for thinning hair!",
+                product: "Repair Treatment Oil",
+                helpfulCount: 15
+            },
+            {
+                name: "Lisa Park",
+                rating: 5,
+                date: "2024-11-28",
+                text: "I love that these products are all natural and ethically sourced. The shine and strength formula makes my hair look salon-quality every day!",
+                product: "Shine & Strength Formula",
+                helpfulCount: 20
+            },
+            {
+                name: "James Wilson",
+                rating: 4,
+                date: "2024-11-20",
+                text: "Solid product. Takes a few weeks to see results but definitely worth the wait. My hair is noticeably healthier and more manageable.",
+                product: "Nourishing Hair Oil",
+                helpfulCount: 9
+            }
+        ];
+
+        // Function to create a review card
+        function createReviewCard(review) {
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            const initial = review.name.charAt(0);
+            const date = new Date(review.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+            return `
+                <div class="review-card">
+                    <div class="reviewer-header">
+                        <div class="reviewer-avatar">${initial}</div>
+                        <div class="reviewer-info">
+                            <h3>${review.name}</h3>
+                            <div class="reviewer-meta">
+                                <div class="review-date">${date}</div>
+                                <div class="review-rating">${stars}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <div class="review-text">"${review.text}"</div>
+                        ${review.highlight ? `<div class="review-highlight">"${review.highlight}"</div>` : ''}
+                    </div>
+                    <div class="review-footer">
+                        <div class="review-product">${review.product}</div>
+                        <div class="review-helpful">Helpful (${review.helpfulCount || 0})</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load reviews from API
+        async function loadReviews() {
+            try {
+                const response = await fetch(`${API_URL}/reviews`);
+                const data = await response.json();
+                
+                const reviewsGrid = document.querySelector('.reviews-grid');
+                reviewsGrid.innerHTML = ''; // Clear existing reviews
+                
+                if (data.reviews && data.reviews.length > 0) {
+                    data.reviews.forEach(review => {
+                        reviewsGrid.innerHTML += createReviewCard(review);
+                    });
+                } else {
+                    // If no reviews, load initial sample reviews
+                    initialReviews.forEach(review => {
+                        reviewsGrid.innerHTML += createReviewCard(review);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                // Load initial reviews as fallback
+                const reviewsGrid = document.querySelector('.reviews-grid');
+                if (reviewsGrid) {
+                    reviewsGrid.innerHTML = initialReviews.map(review => createReviewCard(review)).join('');
+                }
+            }
+        }
+
+        // Add review functionality
+        function addReview() {
+            document.getElementById('reviewModal').style.display = 'block';
+        }
+
+        // Initialize event handlers when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load reviews
+            loadReviews();
+
+            // Close modal when clicking the X or outside the modal
+            const closeModal = document.querySelector('.close-modal');
+            if (closeModal) {
+                closeModal.onclick = function() {
+                    document.getElementById('reviewModal').style.display = 'none';
+                }
+            }
+
+            window.onclick = function(event) {
+                if (event.target == document.getElementById('reviewModal')) {
+                    document.getElementById('reviewModal').style.display = 'none';
+                }
+            }
+
+            // Handle form submission
+            const reviewForm = document.getElementById('reviewForm');
+            if (reviewForm) {
+                reviewForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const newReview = {
+                        name: document.getElementById('reviewerName').value,
+                        rating: parseInt(document.querySelector('input[name="rating"]:checked').value),
+                        product: document.getElementById('productSelect').value,
+                        text: document.getElementById('reviewText').value,
+                        highlight: document.getElementById('reviewHighlight').value
+                    };
+
+                    try {
+                        const response = await fetch(`${API_URL}/reviews`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newReview)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to submit review');
+                        }
+
+                        // Reset form and close modal
+                        this.reset();
+                        document.getElementById('reviewModal').style.display = 'none';
+
+                        // Reload reviews
+                        await loadReviews();
+
+                        alert('Thank you for your review!');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error submitting review. Please try again.');
+                    }
+                });
+            }
+
+            // Header scroll effect
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('header');
+                if (window.scrollY > 100) {
+                    header.style.background = 'rgba(255, 255, 255, 0.98)';
+                    header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+                } else {
+                    header.style.background = 'rgba(255, 255, 255, 0.95)';
+                    header.style.boxShadow = 'none';
+                }
+            });
+        });
+    </script>
+    <script src="cart.js?v=1767414826"></script>
+    <script src="branding.js?v=1767414826"></script>
+    <script src="banner.js?v=1767414826"></script>
+    <script src="auth.js?v=1767414826"></script>
+    <script src="navigation.js?v=1767414826"></script>
+</body>
+</html>

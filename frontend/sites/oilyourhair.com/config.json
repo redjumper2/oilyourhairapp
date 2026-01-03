@@ -1,0 +1,30 @@
+{
+  "domain": "oilyourhair.com",
+  "template": "store-template1",
+  "template_version": "1.0.0",
+  "enabled": true,
+  "site_name": "OilYourHair",
+  "site_description": "Premium Natural Hair Oils",
+  "api": {
+    "products_endpoint": "http://localhost:9091",
+    "products_endpoint_production": "https://api.oilyourhair.com",
+    "auth_endpoint": "http://localhost:9090",
+    "auth_endpoint_production": "https://auth.oilyourhair.com"
+  },
+  "features": {
+    "cart": true,
+    "authentication": true,
+    "product_reviews": true,
+    "sale_banners": true,
+    "variant_selector": true
+  },
+  "seo": {
+    "title": "OilYourHair - Premium Natural Hair Oils",
+    "description": "Discover the power of nature's finest oils. Transform your hair with our premium, ethically-sourced hair care collection.",
+    "keywords": ["hair oil", "natural hair care", "argan oil", "coconut oil", "hair treatment"]
+  },
+  "analytics": {
+    "google_analytics": "",
+    "facebook_pixel": ""
+  }
+}

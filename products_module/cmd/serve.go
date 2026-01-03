@@ -114,6 +114,7 @@ func setupRoutes(e *echo.Echo, db *database.DB, cfg *config.Config) {
 	public.GET("/products", publicHandler.ListProducts)
 	public.GET("/products/:id", publicHandler.GetProduct)
 	public.GET("/products/search", publicHandler.SearchProducts)
+	public.GET("/promotions", publicHandler.GetPromotions)
 
 	// Admin API (API key required)
 	admin := v1.Group("/products", apiKeyAuth)

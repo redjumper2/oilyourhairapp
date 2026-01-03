@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -90,5 +91,51 @@ func (h *PublicHandler) SearchProducts(c echo.Context) error {
 		"products": products,
 		"count":    len(products),
 		"query":    query,
+	})
+}
+
+// GetPromotions returns active promotions/sales for a domain
+func (h *PublicHandler) GetPromotions(c echo.Context) error {
+	domain := c.Param("domain")
+
+	// Get all active products to check for discounts
+	products, err := h.productService.ListProducts(c.Request().Context(), domain, true, nil)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Failed to fetch promotions",
+		})
+	}
+
+	// Check if any products have active discounts
+	hasActiveDiscounts := false
+	maxDiscount := 0
+
+	for _, product := range products {
+		if product.Discount != nil && product.Discount.IsDiscountActive() {
+			hasActiveDiscounts = true
+			discountPercent := product.GetDiscountPercentage()
+			if discountPercent > maxDiscount {
+				maxDiscount = discountPercent
+			}
+		}
+	}
+
+	if !hasActiveDiscounts {
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"active":      false,
+			"promotions":  []interface{}{},
+		})
+	}
+
+	// Return active promotion info
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"active": true,
+		"promotions": []map[string]interface{}{
+			{
+				"type":         "sale",
+				"message":      fmt.Sprintf("Sale - Up to %d%% Off Select Styles", maxDiscount),
+				"max_discount": maxDiscount,
+			},
+		},
 	})
 }

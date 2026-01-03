@@ -36,9 +36,9 @@ body {
     justify-content: center;
     align-items: center;
     padding: 0.75rem 1rem;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
     position: relative;
+    text-align: center;
 }
 
 .promotion-message {
@@ -46,6 +46,8 @@ body {
     font-weight: 500;
     letter-spacing: 0.5px;
     text-align: center;
+    flex: 1;
+    margin: 0 auto;
 }
 
 .banner-close {
@@ -71,15 +73,14 @@ body {
     top: 48px;
 }
 
-/* Header */
+/* Header - Allbirds-inspired clean design */
 header {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: white;
+    border-bottom: 1px solid #e5e5e5;
     z-index: 1000;
-    padding: 1rem 0;
     transition: all 0.3s ease;
 }
 
@@ -87,52 +88,183 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 1rem 2rem;
+    min-height: 64px;
+    position: relative;
+    z-index: 1;
 }
 
 .logo {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 2.25rem;
+    font-weight: 700;
     background: linear-gradient(45deg, #2E7D32, #4CAF50, #66BB6A);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-decoration: none;
+    letter-spacing: -0.02em;
+    transition: opacity 0.2s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.logo:hover {
+    opacity: 0.7;
 }
 
 .nav-links {
     display: flex;
     list-style: none;
     gap: 2rem;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-links a {
     text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: color 0.3s ease;
+    color: #212121;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: color 0.2s ease;
     position: relative;
+    letter-spacing: 0.02em;
 }
 
-.nav-links a:hover {
-    color: #2E7D32;
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--brand-primary, #212121);
 }
 
 .nav-links a::after {
     content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -8px;
     left: 0;
     width: 0;
-    height: 2px;
-    background: linear-gradient(45deg, #2E7D32, #4CAF50);
-    transition: width 0.3s ease;
+    height: 1px;
+    background: var(--brand-primary, #212121);
+    transition: width 0.2s ease;
 }
 
-.nav-links a:hover::after {
+.nav-links a:hover::after,
+.nav-links a.active::after {
     width: 100%;
+}
+
+/* Auth Section */
+.auth-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Cart Button */
+.cart-toggle {
+    background: linear-gradient(45deg, var(--brand-primary, #2E7D32), var(--brand-primary-light, #4CAF50));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.cart-toggle:hover {
+    transform: translateY(-2px);
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* Login Button with Icon */
+.auth-login-btn {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: none;
+    color: #212121;
+    font-size: 0.9rem;
+    font-weight: 400;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    transition: opacity 0.2s ease;
+}
+
+.auth-login-btn:hover {
+    opacity: 0.7;
+}
+
+.auth-login-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* User Display (when logged in) */
+.auth-user-info {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--brand-primary, #212121);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.user-email-display {
+    color: #212121;
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+/* Logout Button with Icon */
+.auth-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: transparent;
+    border: none;
+    color: #666;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.auth-logout-btn:hover {
+    color: #212121;
+}
+
+.auth-logout-btn svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* Hero Section */
@@ -429,10 +561,152 @@ footer {
     color: #4CAF50;
 }
 
+/* Hamburger Menu */
+.hamburger {
+    display: none;
+    cursor: pointer;
+    width: 30px;
+    height: 25px;
+    position: relative;
+    z-index: 1001;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: var(--brand-primary, #2E7D32);
+    border-radius: 3px;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform-origin: center;
+}
+
+.hamburger.active span:first-child {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.hamburger.active span:last-child {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Mobile overlay */
+.nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 998;
+}
+
+.nav-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-    .nav-links {
+    nav {
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .hamburger {
+        display: flex;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .auth-section {
+        gap: 0.25rem;
+        flex-shrink: 0;
+    }
+
+    /* Hide "Sign In" text on mobile, only show icon */
+    .auth-login-btn span {
         display: none;
+    }
+
+    .auth-login-btn {
+        padding: 0.5rem;
+        min-width: auto;
+    }
+
+    .auth-login-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Hide email display on mobile, only show initials */
+    .user-email-display {
+        display: none !important;
+    }
+
+    .auth-user-info .user-email-display {
+        display: none !important;
+    }
+
+    /* Make logout button more compact */
+    .auth-logout-btn {
+        padding: 0.25rem;
+    }
+
+    /* Make cart button more compact */
+    .cart-toggle {
+        padding: 0.4rem 0.7rem;
+        font-size: 1.2rem;
+        min-width: auto;
+        white-space: nowrap;
+    }
+
+    .cart-count {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65rem;
+        top: -6px;
+        right: -6px;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        max-width: 300px;
+        height: 100vh;
+        background: white;
+        flex-direction: column;
+        padding: 5rem 2rem 2rem;
+        gap: 1.5rem;
+        transition: right 0.3s ease;
+        z-index: 999;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .nav-links a {
+        font-size: 1.1rem;
+        padding: 0.75rem 0;
     }
 
     .hero {

@@ -21,6 +21,66 @@
             overflow-x: hidden;
         }
 
+        /* Promotion Banner */
+        .promotion-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--brand-primary, #2E7D32), var(--brand-primary-dark, #1B5E20));
+            color: white;
+            z-index: 2000;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .promotion-banner.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .promotion-banner-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .promotion-message {
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .banner-close {
+            position: absolute;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            line-height: 1;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .banner-close:hover {
+            opacity: 1;
+        }
+
+        /* Adjust header position when banner is visible */
+        .promotion-banner:not(.hidden) ~ header {
+            top: 48px;
+        }
+
         /* Header and Navigation Styles */
         header {
             position: fixed;
@@ -842,6 +902,10 @@
         // Load bestsellers on page load
         loadBestsellers();
     </script>
+    <!-- Branding System -->
+    <script src="branding.js"></script>
+    <!-- Promotion Banner -->
+    <script src="banner.js"></script>
     <!-- Auth Module Integration -->
     <script src="auth.js"></script>
 </body>

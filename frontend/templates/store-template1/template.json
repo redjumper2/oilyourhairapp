@@ -1,0 +1,58 @@
+{
+  "name": "store-template1",
+  "version": "1.0.0",
+  "display_name": "Modern E-Commerce Template",
+  "description": "Allbirds-inspired clean and modern e-commerce template with product variants, discounts, and sale banners",
+  "author": "OilYourHair Team",
+  "created": "2026-01-02",
+  "features": [
+    "product-variants",
+    "discount-system",
+    "sale-banners",
+    "cart-system",
+    "authentication",
+    "responsive-design",
+    "dynamic-branding"
+  ],
+  "supported_product_types": [
+    "physical-goods",
+    "variants-with-attributes",
+    "digital-downloads"
+  ],
+  "required_apis": [
+    "products-api",
+    "auth-api"
+  ],
+  "files": [
+    "index.html",
+    "shop.html",
+    "about.html",
+    "contact.html",
+    "reviews.html",
+    "branding.js",
+    "banner.js",
+    "variant-selector.js",
+    "auth.js",
+    "index.js",
+    "styles.css"
+  ],
+  "customization": {
+    "branding_file": "branding.json",
+    "supports_logo": true,
+    "supports_custom_css": true,
+    "color_scheme_variables": [
+      "--brand-primary",
+      "--brand-primary-dark",
+      "--brand-primary-light",
+      "--brand-secondary",
+      "--brand-accent",
+      "--brand-background",
+      "--brand-text",
+      "--brand-text-light",
+      "--brand-border",
+      "--brand-success",
+      "--brand-error",
+      "--brand-warning"
+    ]
+  }
+}
