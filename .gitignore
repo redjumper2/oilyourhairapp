@@ -43,6 +43,8 @@ coverage/
 .env
 .claude/
 
+cleanup*
+
 # === Python / Setup Scripts ===
 # Virtual environments
 setupdomain/*/venv/
