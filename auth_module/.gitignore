@@ -36,3 +36,5 @@ Thumbs.db
 
 # Logs
 *.log
+auth_module
+config.local.yaml

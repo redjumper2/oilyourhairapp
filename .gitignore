@@ -1,3 +1,7 @@
+# binaries
+auth-module
+products-module
+
 # === Node.js backend ===
 node_modules/
 npm-debug.log*
@@ -44,6 +48,7 @@ coverage/
 .claude/
 
 cleanup*
+cleanup*/
 
 # === Python / Setup Scripts ===
 # Virtual environments
