@@ -1,0 +1,387 @@
+[
+  {
+    "name": "Nourishing Argan Oil",
+    "description": "Pure organic argan oil from Morocco. Rich in vitamin E and fatty acids, this luxurious oil penetrates deep to nourish and revitalize your hair from root to tip.",
+    "short_description": "Pure organic argan oil for deep nourishment",
+    "sku": "NAO-100ML",
+    "price": 29.99,
+    "compare_at_price": 39.99,
+    "cost": 12.00,
+    "category": "Hair Oils",
+    "tags": ["organic", "argan", "moroccan", "natural", "vitamin-e"],
+    "attributes": {
+      "size": "100ml",
+      "weight": "120g",
+      "ingredients": "100% Pure Argan Oil",
+      "origin": "Morocco",
+      "hair_type": "All Hair Types",
+      "organic_certified": true,
+      "vegan": true,
+      "cruelty_free": true,
+      "shelf_life": "24 months"
+    },
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b",
+        "alt": "Nourishing Argan Oil bottle",
+        "position": 1,
+        "is_primary": true
+      }
+    ],
+    "variants": [
+      {
+        "name": "100ml",
+        "sku": "NAO-100ML",
+        "price": 29.99,
+        "stock": 50,
+        "attributes": {
+          "size": "100ml"
+        }
+      },
+      {
+        "name": "200ml",
+        "sku": "NAO-200ML",
+        "price": 49.99,
+        "stock": 30,
+        "attributes": {
+          "size": "200ml"
+        }
+      }
+    ],
+    "inventory": {
+      "track_inventory": true,
+      "stock_quantity": 50,
+      "low_stock_threshold": 10,
+      "allow_backorder": false,
+      "stock_status": "in_stock"
+    },
+    "seo": {
+      "meta_title": "Nourishing Argan Oil - Pure Organic Hair Care",
+      "meta_description": "Transform your hair with our pure organic argan oil from Morocco. Rich in vitamin E for deep nourishment.",
+      "meta_keywords": ["argan oil", "hair oil", "organic", "moroccan oil"],
+      "url_slug": "nourishing-argan-oil"
+    },
+    "shipping": {
+      "weight": 120,
+      "weight_unit": "g",
+      "dimensions": {
+        "length": 5,
+        "width": 5,
+        "height": 15,
+        "unit": "cm"
+      },
+      "requires_shipping": true,
+      "ships_separately": false
+    },
+    "active": true,
+    "featured": true,
+    "bestseller": true,
+    "on_sale": false,
+    "publish_date": "2026-01-01T00:00:00Z"
+  },
+  {
+    "name": "Hydrating Coconut Oil",
+    "description": "Cold-pressed virgin coconut oil that deeply moisturizes and strengthens hair. Perfect for reducing protein loss and adding natural shine.",
+    "short_description": "Virgin coconut oil for deep hydration",
+    "sku": "HCO-150ML",
+    "price": 24.99,
+    "compare_at_price": 29.99,
+    "cost": 10.00,
+    "category": "Hair Oils",
+    "tags": ["coconut", "virgin", "cold-pressed", "natural", "moisturizing"],
+    "attributes": {
+      "size": "150ml",
+      "weight": "140g",
+      "ingredients": "100% Virgin Coconut Oil",
+      "origin": "Philippines",
+      "hair_type": "Dry, Damaged Hair",
+      "organic_certified": true,
+      "vegan": true,
+      "cruelty_free": true,
+      "shelf_life": "18 months"
+    },
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a",
+        "alt": "Hydrating Coconut Oil jar",
+        "position": 1,
+        "is_primary": true
+      }
+    ],
+    "variants": [],
+    "inventory": {
+      "track_inventory": true,
+      "stock_quantity": 75,
+      "low_stock_threshold": 15,
+      "allow_backorder": true,
+      "stock_status": "in_stock"
+    },
+    "seo": {
+      "meta_title": "Hydrating Coconut Oil - Virgin Cold-Pressed",
+      "meta_description": "Cold-pressed virgin coconut oil for deeply moisturized, stronger hair. Natural shine guaranteed.",
+      "meta_keywords": ["coconut oil", "virgin coconut", "hair moisturizer"],
+      "url_slug": "hydrating-coconut-oil"
+    },
+    "shipping": {
+      "weight": 140,
+      "weight_unit": "g",
+      "dimensions": {
+        "length": 6,
+        "width": 6,
+        "height": 12,
+        "unit": "cm"
+      },
+      "requires_shipping": true,
+      "ships_separately": false
+    },
+    "active": true,
+    "featured": true,
+    "bestseller": true,
+    "on_sale": false,
+    "publish_date": "2026-01-01T00:00:00Z"
+  },
+  {
+    "name": "Strengthening Castor Oil",
+    "description": "Premium cold-pressed castor oil that promotes hair growth and thickness. Rich in ricinoleic acid to strengthen hair follicles.",
+    "short_description": "Cold-pressed castor oil for hair growth",
+    "sku": "SCO-120ML",
+    "price": 19.99,
+    "compare_at_price": 0,
+    "cost": 8.00,
+    "category": "Hair Oils",
+    "tags": ["castor", "hair growth", "strengthening", "cold-pressed"],
+    "attributes": {
+      "size": "120ml",
+      "weight": "135g",
+      "ingredients": "100% Pure Castor Oil",
+      "origin": "India",
+      "hair_type": "Thinning Hair",
+      "organic_certified": false,
+      "vegan": true,
+      "cruelty_free": true,
+      "shelf_life": "24 months"
+    },
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1556228720-195a672e8a03",
+        "alt": "Strengthening Castor Oil bottle",
+        "position": 1,
+        "is_primary": true
+      }
+    ],
+    "variants": [],
+    "inventory": {
+      "track_inventory": true,
+      "stock_quantity": 40,
+      "low_stock_threshold": 10,
+      "allow_backorder": false,
+      "stock_status": "in_stock"
+    },
+    "seo": {
+      "meta_title": "Strengthening Castor Oil - Hair Growth Formula",
+      "meta_description": "Promote hair growth and thickness with our premium cold-pressed castor oil. Rich in ricinoleic acid.",
+      "meta_keywords": ["castor oil", "hair growth", "strengthening oil"],
+      "url_slug": "strengthening-castor-oil"
+    },
+    "shipping": {
+      "weight": 135,
+      "weight_unit": "g",
+      "dimensions": {
+        "length": 5,
+        "width": 5,
+        "height": 14,
+        "unit": "cm"
+      },
+      "requires_shipping": true,
+      "ships_separately": false
+    },
+    "active": true,
+    "featured": false,
+    "bestseller": false,
+    "on_sale": false,
+    "publish_date": "2026-01-01T00:00:00Z"
+  },
+  {
+    "name": "Shine & Smooth Jojoba Oil",
+    "description": "Lightweight jojoba oil that mimics your hair's natural oils. Perfect for adding shine without weighing down your hair.",
+    "short_description": "Lightweight jojoba oil for natural shine",
+    "sku": "SSJ-100ML",
+    "price": 27.99,
+    "compare_at_price": 0,
+    "cost": 11.00,
+    "category": "Hair Oils",
+    "tags": ["jojoba", "lightweight", "shine", "natural"],
+    "attributes": {
+      "size": "100ml",
+      "weight": "100g",
+      "ingredients": "100% Pure Jojoba Oil",
+      "origin": "USA",
+      "hair_type": "Fine, Oily Hair",
+      "organic_certified": true,
+      "vegan": true,
+      "cruelty_free": true,
+      "shelf_life": "36 months"
+    },
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b",
+        "alt": "Shine & Smooth Jojoba Oil bottle",
+        "position": 1,
+        "is_primary": true
+      }
+    ],
+    "variants": [],
+    "inventory": {
+      "track_inventory": true,
+      "stock_quantity": 60,
+      "low_stock_threshold": 12,
+      "allow_backorder": true,
+      "stock_status": "in_stock"
+    },
+    "seo": {
+      "meta_title": "Shine & Smooth Jojoba Oil - Lightweight Formula",
+      "meta_description": "Add natural shine without the weight. Our pure jojoba oil mimics your hair's natural oils.",
+      "meta_keywords": ["jojoba oil", "hair shine", "lightweight oil"],
+      "url_slug": "shine-smooth-jojoba-oil"
+    },
+    "shipping": {
+      "weight": 100,
+      "weight_unit": "g",
+      "dimensions": {
+        "length": 4,
+        "width": 4,
+        "height": 13,
+        "unit": "cm"
+      },
+      "requires_shipping": true,
+      "ships_separately": false
+    },
+    "active": true,
+    "featured": false,
+    "bestseller": false,
+    "on_sale": false,
+    "publish_date": "2026-01-01T00:00:00Z"
+  },
+  {
+    "name": "Repair Hair Treatment",
+    "description": "Intensive hair repair treatment combining multiple natural oils. Restores damaged hair and prevents breakage.",
+    "short_description": "Intensive repair treatment for damaged hair",
+    "sku": "RHT-200ML",
+    "price": 34.99,
+    "compare_at_price": 44.99,
+    "cost": 15.00,
+    "category": "Treatments",
+    "tags": ["treatment", "repair", "damaged hair", "intensive"],
+    "attributes": {
+      "size": "200ml",
+      "weight": "220g",
+      "ingredients": "Argan, Coconut, Olive Oil Blend",
+      "origin": "France",
+      "hair_type": "Damaged, Color-Treated Hair",
+      "organic_certified": false,
+      "vegan": true,
+      "cruelty_free": true,
+      "shelf_life": "18 months"
+    },
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d",
+        "alt": "Repair Hair Treatment bottle",
+        "position": 1,
+        "is_primary": true
+      }
+    ],
+    "variants": [],
+    "inventory": {
+      "track_inventory": true,
+      "stock_quantity": 35,
+      "low_stock_threshold": 8,
+      "allow_backorder": false,
+      "stock_status": "in_stock"
+    },
+    "seo": {
+      "meta_title": "Repair Hair Treatment - Intensive Damage Repair",
+      "meta_description": "Restore your damaged hair with our intensive repair treatment. Perfect for color-treated hair.",
+      "meta_keywords": ["hair treatment", "repair", "damaged hair", "intensive care"],
+      "url_slug": "repair-hair-treatment"
+    },
+    "shipping": {
+      "weight": 220,
+      "weight_unit": "g",
+      "dimensions": {
+        "length": 7,
+        "width": 7,
+        "height": 16,
+        "unit": "cm"
+      },
+      "requires_shipping": true,
+      "ships_separately": false
+    },
+    "active": true,
+    "featured": true,
+    "bestseller": true,
+    "on_sale": true,
+    "publish_date": "2026-01-01T00:00:00Z"
+  },
+  {
+    "name": "Moisturizing Hair Mask",
+    "description": "Deep conditioning hair mask for intense hydration. Leaves hair soft, manageable, and beautifully scented.",
+    "short_description": "Deep conditioning mask for intense hydration",
+    "sku": "MHM-250ML",
+    "price": 32.99,
+    "compare_at_price": 0,
+    "cost": 14.00,
+    "category": "Treatments",
+    "tags": ["mask", "conditioning", "hydration", "curly hair"],
+    "attributes": {
+      "size": "250ml",
+      "weight": "280g",
+      "ingredients": "Shea Butter, Argan Oil, Keratin",
+      "origin": "France",
+      "hair_type": "Curly, Frizzy Hair",
+      "organic_certified": false,
+      "vegan": false,
+      "cruelty_free": true,
+      "shelf_life": "12 months"
+    },
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1522338242992-e1a54906a8da",
+        "alt": "Moisturizing Hair Mask jar",
+        "position": 1,
+        "is_primary": true
+      }
+    ],
+    "variants": [],
+    "inventory": {
+      "track_inventory": true,
+      "stock_quantity": 45,
+      "low_stock_threshold": 10,
+      "allow_backorder": true,
+      "stock_status": "in_stock"
+    },
+    "seo": {
+      "meta_title": "Moisturizing Hair Mask - Deep Conditioning Treatment",
+      "meta_description": "Intense hydration for curly and frizzy hair. Our deep conditioning mask leaves hair soft and manageable.",
+      "meta_keywords": ["hair mask", "deep conditioning", "curly hair", "frizzy hair"],
+      "url_slug": "moisturizing-hair-mask"
+    },
+    "shipping": {
+      "weight": 280,
+      "weight_unit": "g",
+      "dimensions": {
+        "length": 8,
+        "width": 8,
+        "height": 10,
+        "unit": "cm"
+      },
+      "requires_shipping": true,
+      "ships_separately": false
+    },
+    "active": true,
+    "featured": false,
+    "bestseller": false,
+    "on_sale": false,
+    "publish_date": "2026-01-01T00:00:00Z"
+  }
+]

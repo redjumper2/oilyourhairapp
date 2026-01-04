@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - OilYourHair</title>
-    <link rel="stylesheet" href="styles.css?v=1767414826">
+    <link rel="stylesheet" href="styles.css?v=1767511987">
     <style>
         /* Common styles (header, nav, banner, etc.) are in styles.css */
         /* Shop-specific styles below */
@@ -845,7 +845,7 @@
                         description: p.description || '',
                         features: p.attributes?.features ? p.attributes.features.split(',') : [],
                         hairType: p.attributes?.hair_type ? p.attributes.hair_type.split(',') : [],
-                        ingredient: p.attributes?.type || '',
+                        ingredient: p.attributes?.ingredients || '',
                         badge: p.attributes?.badge || '',
                         hasDiscount: hasDiscount
                     };
@@ -917,7 +917,8 @@
             }).join('');
         }
 
-        function addToCart(id) {
+        // Define cart functions on window to prevent cart.js from overriding them
+        window.addToCart = function(id) {
             const product = products.find(p => p.id === id);
             const existing = cart.find(item => item.id === id);
 
@@ -934,15 +935,15 @@
 
             saveCart(); // Persist to localStorage
             updateCartUI();
-        }
+        };
 
-        function removeFromCart(id) {
+        window.removeFromCart = function(id) {
             cart = cart.filter(item => item.id !== id);
             saveCart(); // Persist to localStorage
             updateCartUI();
-        }
+        };
 
-        function updateQuantity(id, change) {
+        window.updateQuantity = function(id, change) {
             const item = cart.find(item => item.id === id);
             if (item) {
                 item.quantity += change;
@@ -952,9 +953,9 @@
                     updateCartUI();
                 }
             }
-        }
+        };
 
-        function updateCartUI() {
+        window.updateCartUI = function() {
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cartCount').textContent = totalItems;
 
@@ -966,20 +967,23 @@
                 cartSummary.innerHTML = '';
             } else {
                 cartItems.innerHTML = cart.map(item => {
-                    const displayPrice = item.finalPrice || item.price;
-                    const priceDisplay = item.hasDiscount
-                        ? `<div class="cart-item-price">$${displayPrice.toFixed(2)} <span style="text-decoration: line-through; color: #999; font-size: 0.85em; margin-left: 0.5rem;">$${item.price.toFixed(2)}</span></div>`
+                    // Handle cases where price might be undefined (old cart items)
+                    const displayPrice = item.finalPrice || item.price || 0;
+                    const originalPrice = item.price || 0;
+
+                    const priceDisplay = item.hasDiscount && originalPrice > 0
+                        ? `<div class="cart-item-price">$${displayPrice.toFixed(2)} <span style="text-decoration: line-through; color: #999; font-size: 0.85em; margin-left: 0.5rem;">$${originalPrice.toFixed(2)}</span></div>`
                         : `<div class="cart-item-price">$${displayPrice.toFixed(2)}</div>`;
 
                     return `
                         <div class="cart-item">
-                            <img src="${item.image}" alt="${item.name}">
+                            <img src="${item.image || 'https://via.placeholder.com/400x400?text=No+Image'}" alt="${item.name || 'Product'}">
                             <div class="cart-item-info">
-                                <div class="cart-item-title">${item.name}</div>
+                                <div class="cart-item-title">${item.name || 'Unknown Product'}</div>
                                 ${priceDisplay}
                                 <div class="quantity-controls">
                                     <button class="quantity-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
-                                    <span class="quantity">${item.quantity}</span>
+                                    <span class="quantity">${item.quantity || 1}</span>
                                     <button class="quantity-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
                                 </div>
                             </div>
@@ -989,7 +993,7 @@
                 }).join('');
 
                 const total = cart.reduce((sum, item) => {
-                    const itemPrice = item.finalPrice || item.price;
+                    const itemPrice = item.finalPrice || item.price || 0;
                     return sum + (itemPrice * item.quantity);
                 }, 0);
                 cartSummary.innerHTML = `
@@ -997,12 +1001,12 @@
                     <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
                 `;
             }
-        }
+        };
 
-        function toggleCart() {
+        window.toggleCart = function() {
             document.getElementById('cartSidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('active');
-        }
+        };
 
         // Filter state (multi-select for hairType and ingredients)
         let activeFilters = {
@@ -1241,22 +1245,47 @@
             const ingredients = activeFilters.ingredients.map(f => f.value);
             const { min, max, value: priceValue } = activeFilters.priceRange;
 
+            console.log('Filtering with:', { hairTypes, ingredients, priceValue });
+            console.log('Total products:', products.length);
+
+            if (products.length > 0) {
+                console.log('First product attributes:', products[0].attributes);
+            }
+
             filteredProducts = products.filter(p => {
                 // Multi-select: match if any selected hair type matches (OR logic within category)
+                // Use case-insensitive substring matching for hair type
                 const matchesHair = hairTypes.length === 0 ||
-                    hairTypes.some(type => p.attributes?.hair_type === type || p.hairType?.includes(type));
+                    hairTypes.some(type => {
+                        // p.hairType is an array of comma-separated values from hair_type attribute
+                        const hairTypeValues = (p.hairType || []).map(ht => ht.trim().toLowerCase());
+                        const matches = hairTypeValues.some(ht => ht.includes(type.toLowerCase()));
+                        if (hairTypes.length > 0) {
+                            console.log(`Hair type check: "${type}" in [${hairTypeValues}] = ${matches}`);
+                        }
+                        return matches;
+                    });
 
                 // Price filter: check if product price is within selected range
-                const productPrice = p.finalPrice || p.base_price || p.price;
+                const productPrice = p.discountedPrice || p.price;
                 const matchesPrice = !priceValue || (productPrice >= min && productPrice <= max);
 
                 // Multi-select: match if any selected ingredient matches (OR logic within category)
+                // Use case-insensitive substring matching for ingredients
                 const matchesIngredient = ingredients.length === 0 ||
-                    ingredients.some(ing => p.attributes?.ingredient === ing || p.ingredient === ing);
+                    ingredients.some(ing => {
+                        const ingredientValue = (p.ingredient || '').toLowerCase();
+                        const matches = ingredientValue.includes(ing.toLowerCase());
+                        if (ingredients.length > 0) {
+                            console.log(`Ingredient check: "${ing}" in "${ingredientValue}" = ${matches}`);
+                        }
+                        return matches;
+                    });
 
                 return matchesHair && matchesPrice && matchesIngredient;
             });
 
+            console.log('Filtered products:', filteredProducts.length);
             loadProducts();
         }
 
@@ -1284,12 +1313,12 @@
     </script>
 
     <!-- Branding System -->
-    <script src="cart.js?v=1767414826"></script>
-    <script src="branding.js?v=1767414826"></script>
+    <script src="cart.js?v=1767511987"></script>
+    <script src="branding.js?v=1767511987"></script>
     <!-- Promotion Banner -->
-    <script src="banner.js?v=1767414826"></script>
+    <script src="banner.js?v=1767511987"></script>
     <!-- Auth Module Integration -->
-    <script src="auth.js?v=1767414826"></script>
-    <script src="navigation.js?v=1767414826"></script>
+    <script src="auth.js?v=1767511987"></script>
+    <script src="navigation.js?v=1767511987"></script>
 </body>
 </html>

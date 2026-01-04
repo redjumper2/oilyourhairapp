@@ -1,0 +1,41 @@
+# Auth Module Configuration - Local CLI Usage
+# This config is for running CLI commands from the host (not in Docker)
+
+server:
+  port: 9090
+  env: development
+  host: 0.0.0.0
+
+mongodb:
+  uri: mongodb://localhost:27017
+  database: auth_module
+
+jwt:
+  secret: dev-secret-change-in-production-12345678901234567890
+  expiry_hours: 24
+
+google:
+  client_id: your-google-client-id
+  client_secret: your-google-client-secret
+  callback_url: http://localhost:8080/auth/google/callback
+
+email:
+  smtp:
+    host: smtp.gmail.com
+    port: 587
+    user: your-email@gmail.com
+    password: your-app-password
+  from_address: noreply@yourdomain.com
+
+magic_link:
+  expiry_minutes: 15
+
+invitation:
+  defaults:
+    email_expiry_hours: 24
+    qr_code_expiry_hours: 72
+    promotional_expiry_hours: 720  # 30 days
+
+app:
+  url: http://localhost:8080
+  frontend_url: http://localhost:3000

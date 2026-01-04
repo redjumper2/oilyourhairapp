@@ -1,0 +1,47 @@
+{
+  "auth_service": {
+    "url": "http://localhost:8080",
+    "api_version": "v1",
+    "endpoints": {
+      "health": "/health",
+      "domains": "/api/v1/domains",
+      "signup": "/api/v1/auth/invitation/accept",
+      "login": "/api/v1/auth/magic-link/request",
+      "verify_magic_link": "/api/v1/auth/magic-link/verify",
+      "me": "/api/v1/auth/me"
+    },
+    "timeout_seconds": 30
+  },
+  "products_service": {
+    "url": "http://localhost:9091",
+    "api_version": "v1",
+    "endpoints": {
+      "health": "/health",
+      "products": "/api/v1/products",
+      "public_products": "/api/v1/public/{domain}/products",
+      "reviews": "/api/v1/public/{domain}/reviews",
+      "contact": "/api/v1/public/{domain}/contact"
+    },
+    "timeout_seconds": 30
+  },
+  "database": {
+    "type": "mongodb",
+    "host": "localhost",
+    "port": 27017,
+    "databases": {
+      "auth": "auth_module",
+      "products": "products_module"
+    },
+    "connection_timeout_seconds": 10
+  },
+  "api_keys": {
+    "products_service": {
+      "permissions": [
+        "products.read",
+        "products.write",
+        "products.delete"
+      ],
+      "expiry_days": 365
+    }
+  }
+}

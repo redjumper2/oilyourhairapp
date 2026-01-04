@@ -1,0 +1,42 @@
+{
+  "email": "admin@oilyourhair.com",
+  "password": "SecurePass123!",
+  "first_name": "Admin",
+  "last_name": "User",
+  "profile": {
+    "display_name": "Site Administrator",
+    "avatar_url": "",
+    "bio": "Platform administrator",
+    "phone": "",
+    "timezone": "America/New_York",
+    "language": "en"
+  },
+  "roles": [
+    "admin",
+    "editor",
+    "moderator"
+  ],
+  "permissions": [
+    "products.read",
+    "products.write",
+    "products.delete",
+    "users.read",
+    "users.write",
+    "domain.configure"
+  ],
+  "metadata": {
+    "department": "Administration",
+    "employee_id": "ADMIN001",
+    "hire_date": "2026-01-03"
+  },
+  "preferences": {
+    "email_notifications": true,
+    "marketing_emails": false,
+    "newsletter": true
+  },
+  "status": {
+    "active": true,
+    "verified": true,
+    "suspended": false
+  }
+}

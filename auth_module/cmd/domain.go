@@ -25,17 +25,22 @@ var domainCmd = &cobra.Command{
 var domainCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new domain",
-	Long:  `Create a new domain and send magic link invitation to the admin`,
+	Long:  `Create a new domain and optionally send magic link invitation to the admin`,
 	Run: func(cmd *cobra.Command, args []string) {
 		domain, _ := cmd.Flags().GetString("domain")
 		name, _ := cmd.Flags().GetString("name")
 		adminEmail, _ := cmd.Flags().GetString("admin-email")
+		noInvite, _ := cmd.Flags().GetBool("no-invite")
 
-		if domain == "" || name == "" || adminEmail == "" {
-			log.Fatal("domain, name, and admin-email are required")
+		if domain == "" || name == "" {
+			log.Fatal("domain and name are required")
 		}
 
-		createDomain(domain, name, adminEmail)
+		if !noInvite && adminEmail == "" {
+			log.Fatal("admin-email is required when creating invitation (use --no-invite to skip)")
+		}
+
+		createDomain(domain, name, adminEmail, noInvite)
 	},
 }
 
@@ -77,12 +82,13 @@ func init() {
 	domainCreateCmd.Flags().String("domain", "", "Domain name (e.g., oilyourhair.com)")
 	domainCreateCmd.Flags().String("name", "", "Company name (e.g., Oil Your Hair)")
 	domainCreateCmd.Flags().String("admin-email", "", "Admin email address")
+	domainCreateCmd.Flags().Bool("no-invite", false, "Skip sending invitation email")
 
 	// Flags for delete command
 	domainDeleteCmd.Flags().String("domain", "", "Domain name to delete")
 }
 
-func createDomain(domainName, companyName, adminEmail string) {
+func createDomain(domainName, companyName, adminEmail string, noInvite bool) {
 	// Connect to database
 	db, err := database.Connect(cfg.MongoDB.URI, cfg.MongoDB.Database)
 	if err != nil {
@@ -118,33 +124,37 @@ func createDomain(domainName, companyName, adminEmail string) {
 
 	log.Printf("✅ Domain created: %s (%s)", domainName, companyName)
 
-	// Create admin user invitation
-	invitationService := services.NewInvitationService(db, cfg)
+	// Create admin user invitation (unless --no-invite flag is used)
+	if !noInvite {
+		invitationService := services.NewInvitationService(db, cfg)
 
-	invitation, qrCodeURL, err := invitationService.CreateInvitation(ctx, &services.CreateInvitationRequest{
-		Domain:          domainName,
-		Email:           adminEmail,
-		Role:            "admin",
-		Type:            "email_with_qr",
-		SingleUse:       true,
-		ExpiresInHours:  cfg.Invitation.Defaults.EmailExpiryHours,
-	})
-	if err != nil {
-		log.Fatalf("Failed to create admin invitation: %v", err)
+		invitation, qrCodeURL, err := invitationService.CreateInvitation(ctx, &services.CreateInvitationRequest{
+			Domain:          domainName,
+			Email:           adminEmail,
+			Role:            "admin",
+			Type:            "email_with_qr",
+			SingleUse:       true,
+			ExpiresInHours:  cfg.Invitation.Defaults.EmailExpiryHours,
+		})
+		if err != nil {
+			log.Fatalf("Failed to create admin invitation: %v", err)
+		}
+
+		inviteURL := fmt.Sprintf("%s/invite?token=%s", cfg.App.FrontendURL, invitation.Token)
+
+		log.Printf("✅ Admin invitation created for: %s", adminEmail)
+		log.Printf("📧 Invitation URL: %s", inviteURL)
+		log.Printf("📱 QR Code: %s", qrCodeURL)
+		log.Printf("⏰ Expires: %s", invitation.ExpiresAt.Format(time.RFC3339))
+
+		fmt.Println("\n---")
+		fmt.Println("Next steps:")
+		fmt.Println("1. Send the invitation URL to the admin via email")
+		fmt.Println("2. Admin clicks the link or scans the QR code")
+		fmt.Println("3. Admin completes signup and gets access")
+	} else {
+		log.Printf("ℹ️  Skipping invitation creation (--no-invite flag used)")
 	}
-
-	inviteURL := fmt.Sprintf("%s/invite?token=%s", cfg.App.FrontendURL, invitation.Token)
-
-	log.Printf("✅ Admin invitation created for: %s", adminEmail)
-	log.Printf("📧 Invitation URL: %s", inviteURL)
-	log.Printf("📱 QR Code: %s", qrCodeURL)
-	log.Printf("⏰ Expires: %s", invitation.ExpiresAt.Format(time.RFC3339))
-
-	fmt.Println("\n---")
-	fmt.Println("Next steps:")
-	fmt.Println("1. Send the invitation URL to the admin via email")
-	fmt.Println("2. Admin clicks the link or scans the QR code")
-	fmt.Println("3. Admin completes signup and gets access")
 }
 
 func listDomains() {

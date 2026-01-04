@@ -1,0 +1,38 @@
+{
+  "domain": "oilyourhair.com",
+  "name": "Oil Your Hair",
+  "description": "Natural hair care products for beautiful, healthy hair",
+  "settings": {
+    "allow_signups": true,
+    "require_email_verification": false,
+    "require_invite_token": true,
+    "password_policy": {
+      "min_length": 8,
+      "require_uppercase": true,
+      "require_lowercase": true,
+      "require_numbers": true,
+      "require_special_chars": true
+    },
+    "session": {
+      "token_expiry_hours": 720,
+      "refresh_token_enabled": true,
+      "max_sessions_per_user": 5
+    },
+    "security": {
+      "max_login_attempts": 5,
+      "lockout_duration_minutes": 30,
+      "two_factor_enabled": false
+    }
+  },
+  "branding": {
+    "primary_color": "#2E7D32",
+    "secondary_color": "#4CAF50",
+    "logo_url": "https://via.placeholder.com/150x50?text=OilYourHair",
+    "favicon_url": ""
+  },
+  "contact": {
+    "support_email": "support@oilyourhair.com",
+    "phone": "+1 (555) 123-4567",
+    "address": "123 Natural Hair Blvd, Green City, HC 98765"
+  }
+}

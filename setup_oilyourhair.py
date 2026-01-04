@@ -11,7 +11,9 @@ This script recreates the complete oilyourhair.com setup including:
 - Reviews (pre-populated with sample 5-star reviews)
 
 Usage:
-    python3 setup_oilyourhair.py
+    python3 setup_oilyourhair.py              # Normal setup
+    python3 setup_oilyourhair.py --clean      # Clean database first, then setup
+    python3 setup_oilyourhair.py --clean-only # Only clean database, don't setup
 
 Requirements:
     pip install requests colorama
@@ -287,115 +289,179 @@ def create_api_key() -> Optional[str]:
 
 
 def get_products_data() -> List[Dict]:
-    """Get the product data to populate."""
+    """Get the product data to populate - matches add_oil_products.sh structure."""
     return [
         {
-            "domain": DOMAIN,
-            "name": "Nourishing Argan Oil",
-            "description": "Pure organic argan oil from Morocco. Rich in vitamin E and fatty acids, this luxurious oil penetrates deep to nourish and revitalize your hair from root to tip.",
-            "price": 29.99,
-            "category": "Hair Oils",
+            "name": "Argan Oil Elixir",
+            "description": "Pure Moroccan argan oil for deep nourishment and shine. Perfect for dry and damaged hair. Rich in vitamins and antioxidants.",
+            "base_price": 45.99,
+            "images": ["https://images.unsplash.com/photo-1571781926291-c477ebfd024b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
             "attributes": {
-                "size": "100ml",
-                "ingredients": "100% Pure Argan Oil",
-                "origin": "Morocco",
-                "hair_type": "All Hair Types"
+                "category": "oils",
+                "type": "argan",
+                "organic": "true",
+                "badge": "Bestseller",
+                "hair_type": "Dry, Damaged Hair",
+                "ingredients": "Argan Oil",
+                "features": "Organic,Cold-Pressed,Anti-Aging"
             },
-            "images": [
-                "https://images.unsplash.com/photo-1571781926291-c477ebfd024b"
-            ],
-            "active": True,
-            "bestseller": True
+            "variants": [
+                {
+                    "attributes": {"size": "50ml"},
+                    "price": 45.99,
+                    "stock": 25,
+                    "sku": "AR-50"
+                },
+                {
+                    "attributes": {"size": "100ml"},
+                    "price": 79.99,
+                    "stock": 40,
+                    "sku": "AR-100"
+                }
+            ]
         },
         {
-            "domain": DOMAIN,
-            "name": "Hydrating Coconut Oil",
-            "description": "Cold-pressed virgin coconut oil that deeply moisturizes and strengthens hair. Perfect for reducing protein loss and adding natural shine.",
-            "price": 24.99,
-            "category": "Hair Oils",
+            "name": "Coconut Miracle Oil",
+            "description": "Virgin coconut oil for moisture and protection. Perfect for dry, curly, and normal hair types. Provides heat protection and deep conditioning.",
+            "base_price": 29.99,
+            "images": ["https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
             "attributes": {
-                "size": "150ml",
-                "ingredients": "100% Virgin Coconut Oil",
-                "origin": "Philippines",
-                "hair_type": "Dry, Damaged Hair"
+                "category": "oils",
+                "type": "coconut",
+                "organic": "true",
+                "hair_type": "Dry, Curly Hair",
+                "ingredients": "Coconut Oil",
+                "features": "Virgin,Moisturizing,Heat Protection"
             },
-            "images": [
-                "https://images.unsplash.com/photo-1599351431202-1e0f0137899a"
-            ],
-            "active": True,
-            "bestseller": True
+            "variants": [
+                {
+                    "attributes": {"size": "250ml"},
+                    "price": 29.99,
+                    "stock": 50,
+                    "sku": "CO-250"
+                },
+                {
+                    "attributes": {"size": "500ml"},
+                    "price": 49.99,
+                    "stock": 30,
+                    "sku": "CO-500"
+                }
+            ]
         },
         {
-            "domain": DOMAIN,
-            "name": "Strengthening Castor Oil",
-            "description": "Premium cold-pressed castor oil that promotes hair growth and thickness. Rich in ricinoleic acid to strengthen hair follicles.",
-            "price": 19.99,
-            "category": "Hair Oils",
+            "name": "Jojoba Scalp Treatment",
+            "description": "Lightweight jojoba oil for scalp health and balance. Non-greasy formula perfect for oily and normal hair. Promotes healthy scalp environment.",
+            "base_price": 38.99,
+            "images": ["https://images.unsplash.com/photo-1556228720-195a672e8a03?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
             "attributes": {
-                "size": "120ml",
-                "ingredients": "100% Pure Castor Oil",
-                "origin": "India",
-                "hair_type": "Thinning Hair"
+                "category": "treatments",
+                "type": "jojoba",
+                "organic": "true",
+                "badge": "New",
+                "hair_type": "Oily Hair",
+                "ingredients": "Jojoba Oil",
+                "features": "Lightweight,Scalp Care,Non-Greasy"
             },
-            "images": [
-                "https://images.unsplash.com/photo-1556228720-195a672e8a03"
-            ],
-            "active": True,
-            "bestseller": False
+            "variants": [
+                {
+                    "attributes": {"size": "100ml"},
+                    "price": 38.99,
+                    "stock": 35,
+                    "sku": "JO-100"
+                },
+                {
+                    "attributes": {"size": "200ml"},
+                    "price": 64.99,
+                    "stock": 20,
+                    "sku": "JO-200"
+                }
+            ]
         },
         {
-            "domain": DOMAIN,
-            "name": "Shine & Smooth Jojoba Oil",
-            "description": "Lightweight jojoba oil that mimics your hair's natural oils. Perfect for adding shine without weighing down your hair.",
-            "price": 27.99,
-            "category": "Hair Oils",
+            "name": "Rosemary Growth Serum",
+            "description": "Stimulating rosemary oil blend for hair growth. Herbal formula that promotes circulation and strengthens follicles. Popular choice for growth support.",
+            "base_price": 52.99,
+            "images": ["https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
             "attributes": {
-                "size": "100ml",
-                "ingredients": "100% Pure Jojoba Oil",
-                "origin": "USA",
-                "hair_type": "Fine, Oily Hair"
+                "category": "treatments",
+                "type": "rosemary",
+                "organic": "true",
+                "badge": "Popular",
+                "hair_type": "Dry, Damaged Hair",
+                "ingredients": "Rosemary Oil",
+                "features": "Growth Formula,Stimulating,Herbal"
             },
-            "images": [
-                "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b"
-            ],
-            "active": True,
-            "bestseller": False
+            "variants": [
+                {
+                    "attributes": {"size": "60ml"},
+                    "price": 52.99,
+                    "stock": 45,
+                    "sku": "RO-60"
+                },
+                {
+                    "attributes": {"size": "120ml"},
+                    "price": 89.99,
+                    "stock": 25,
+                    "sku": "RO-120"
+                }
+            ]
         },
         {
-            "domain": DOMAIN,
-            "name": "Repair Hair Treatment",
-            "description": "Intensive hair repair treatment combining multiple natural oils. Restores damaged hair and prevents breakage.",
-            "price": 34.99,
-            "category": "Treatments",
+            "name": "Castor Oil Strength Booster",
+            "description": "Thick castor oil for strengthening and thickness. Rich formula perfect for damaged, dry, and curly hair. Traditional strengthening treatment.",
+            "base_price": 34.99,
+            "images": ["https://images.unsplash.com/photo-1556228578-0d85b1a4d571?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
             "attributes": {
-                "size": "200ml",
-                "ingredients": "Argan, Coconut, Olive Oil Blend",
-                "origin": "France",
-                "hair_type": "Damaged, Color-Treated Hair"
+                "category": "oils",
+                "type": "castor",
+                "organic": "false",
+                "hair_type": "Damaged, Dry, Curly Hair",
+                "ingredients": "Castor Oil",
+                "features": "Strengthening,Thickening,Rich Formula"
             },
-            "images": [
-                "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d"
-            ],
-            "active": True,
-            "bestseller": True
+            "variants": [
+                {
+                    "attributes": {"size": "250ml"},
+                    "price": 34.99,
+                    "stock": 35,
+                    "sku": "CA-250"
+                },
+                {
+                    "attributes": {"size": "500ml"},
+                    "price": 59.99,
+                    "stock": 20,
+                    "sku": "CA-500"
+                }
+            ]
         },
         {
-            "domain": DOMAIN,
-            "name": "Moisturizing Hair Mask",
-            "description": "Deep conditioning hair mask for intense hydration. Leaves hair soft, manageable, and beautifully scented.",
-            "price": 32.99,
-            "category": "Treatments",
+            "name": "Luxury Hair Oil Blend",
+            "description": "Premium blend of 7 exotic oils for ultimate luxury. Our signature formula combines argan, jojoba, coconut, rosemary, lavender, and more for complete hair transformation.",
+            "base_price": 89.99,
+            "images": ["https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
             "attributes": {
-                "size": "250ml",
-                "ingredients": "Shea Butter, Argan Oil, Keratin",
-                "origin": "France",
-                "hair_type": "Curly, Frizzy Hair"
+                "category": "oils",
+                "type": "blend",
+                "organic": "true",
+                "badge": "Premium",
+                "hair_type": "Dry, Damaged Hair",
+                "ingredients": "Argan Oil, Jojoba Oil, Coconut Oil, Rosemary Oil",
+                "features": "Luxury Blend,7 Oils,Premium"
             },
-            "images": [
-                "https://images.unsplash.com/photo-1522338242992-e1a54906a8da"
-            ],
-            "active": True,
-            "bestseller": False
+            "variants": [
+                {
+                    "attributes": {"size": "100ml"},
+                    "price": 89.99,
+                    "stock": 15,
+                    "sku": "LUX-100"
+                },
+                {
+                    "attributes": {"size": "200ml"},
+                    "price": 159.99,
+                    "stock": 10,
+                    "sku": "LUX-200"
+                }
+            ]
         }
     ]
 
@@ -428,8 +494,10 @@ def create_products(api_key: str) -> List[str]:
                 product_ids.append(product_id)
                 print_success(f"Created: {product['name']}")
                 print_data("  Product ID", product_id)
-                print_data("  Price", f"${product['price']}")
-                print_data("  Bestseller", "Yes" if product['bestseller'] else "No")
+                print_data("  Base Price", f"${product['base_price']}")
+                badge = product.get('attributes', {}).get('badge')
+                if badge:
+                    print_data("  Badge", badge)
             else:
                 print_error(f"Failed to create product: {response.text}")
         except requests.exceptions.RequestException as e:
@@ -534,9 +602,19 @@ def verify_setup() -> bool:
             product_count = data.get('count', 0)
             print_success(f"Products verified: {product_count} products found")
 
-            # Check for bestsellers
-            bestsellers = [p for p in data.get('products', []) if p.get('bestseller')]
-            print_data("  Bestsellers", len(bestsellers))
+            # Check for products with badges
+            products = data.get('products', [])
+            with_badges = [p for p in products if p.get('attributes', {}).get('badge')]
+            print_data("  Products with badges", len(with_badges))
+
+            # Count badges by type
+            badges = {}
+            for p in products:
+                badge = p.get('attributes', {}).get('badge')
+                if badge:
+                    badges[badge] = badges.get(badge, 0) + 1
+            if badges:
+                print_data("  Badge breakdown", ", ".join([f"{k}: {v}" for k, v in badges.items()]))
         else:
             print_error("Failed to verify products")
             all_ok = False

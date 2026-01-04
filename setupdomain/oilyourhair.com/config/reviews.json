@@ -1,0 +1,128 @@
+[
+  {
+    "product": "Nourishing Argan Oil",
+    "product_sku": "NAO-100ML",
+    "name": "Sarah Johnson",
+    "email": "sarah.j@example.com",
+    "rating": 5,
+    "title": "Best hair product ever!",
+    "text": "Absolutely love this argan oil! My hair has never been softer or shinier. I use it after every wash and the results are incredible. The light coconut scent is amazing too!",
+    "highlight": "Best hair product I have ever used!",
+    "verified_purchase": true,
+    "would_recommend": true,
+    "helpful_count": 24,
+    "images": [],
+    "metadata": {
+      "hair_type": "Dry",
+      "usage_duration": "3 months",
+      "age_range": "25-34"
+    },
+    "status": "approved",
+    "featured": true
+  },
+  {
+    "product": "Hydrating Coconut Oil",
+    "product_sku": "HCO-150ML",
+    "name": "Michael Chen",
+    "email": "michael.c@example.com",
+    "rating": 5,
+    "title": "Transformed my damaged hair",
+    "text": "This serum is a game-changer for my dry, damaged hair. After just two weeks of use, my hair feels healthier and looks more vibrant. Highly recommend!",
+    "highlight": "Transformed my damaged hair completely",
+    "verified_purchase": true,
+    "would_recommend": true,
+    "helpful_count": 18,
+    "images": [],
+    "metadata": {
+      "hair_type": "Damaged",
+      "usage_duration": "2 weeks",
+      "age_range": "35-44"
+    },
+    "status": "approved",
+    "featured": true
+  },
+  {
+    "product": "Moisturizing Hair Mask",
+    "product_sku": "MHM-250ML",
+    "name": "Emily Rodriguez",
+    "email": "emily.r@example.com",
+    "rating": 5,
+    "title": "Perfect for curly hair",
+    "text": "I have curly hair that tends to get frizzy, but this hair mask keeps it smooth and defined. The natural ingredients are a huge plus, and it smells wonderful!",
+    "highlight": "Perfect for curly hair - no more frizz!",
+    "verified_purchase": true,
+    "would_recommend": true,
+    "helpful_count": 31,
+    "images": [],
+    "metadata": {
+      "hair_type": "Curly",
+      "usage_duration": "1 month",
+      "age_range": "25-34"
+    },
+    "status": "approved",
+    "featured": false
+  },
+  {
+    "product": "Strengthening Castor Oil",
+    "product_sku": "SCO-120ML",
+    "name": "David Thompson",
+    "email": "david.t@example.com",
+    "rating": 5,
+    "title": "Noticeable improvement",
+    "text": "As someone with thinning hair, I was skeptical, but this oil has made a noticeable difference. My hair feels thicker and stronger. Will definitely keep using this!",
+    "highlight": "Noticeable improvement in hair thickness",
+    "verified_purchase": true,
+    "would_recommend": true,
+    "helpful_count": 42,
+    "images": [],
+    "metadata": {
+      "hair_type": "Thinning",
+      "usage_duration": "6 weeks",
+      "age_range": "45-54"
+    },
+    "status": "approved",
+    "featured": true
+  },
+  {
+    "product": "Repair Hair Treatment",
+    "product_sku": "RHT-200ML",
+    "name": "Jessica Park",
+    "email": "jessica.p@example.com",
+    "rating": 5,
+    "title": "Brought my hair back to life",
+    "text": "After years of heat styling and coloring, my hair was in bad shape. This treatment has brought it back to life! It is soft, shiny, and so much healthier. Cannot recommend enough!",
+    "highlight": "Brought my damaged hair back to life",
+    "verified_purchase": true,
+    "would_recommend": true,
+    "helpful_count": 56,
+    "images": [],
+    "metadata": {
+      "hair_type": "Color-treated",
+      "usage_duration": "2 months",
+      "age_range": "25-34"
+    },
+    "status": "approved",
+    "featured": true
+  },
+  {
+    "product": "Shine & Smooth Jojoba Oil",
+    "product_sku": "SSJ-100ML",
+    "name": "Ryan Martinez",
+    "email": "ryan.m@example.com",
+    "rating": 5,
+    "title": "Amazing shine without grease",
+    "text": "I have been using this oil for a month now and the shine it gives my hair is incredible. It is lightweight and does not make my hair greasy. A little goes a long way!",
+    "highlight": "Amazing shine without the grease",
+    "verified_purchase": true,
+    "would_recommend": true,
+    "helpful_count": 19,
+    "images": [],
+    "metadata": {
+      "hair_type": "Fine",
+      "usage_duration": "1 month",
+      "age_range": "25-34"
+    },
+    "status": "approved",
+    "featured": false
+  }
+]
