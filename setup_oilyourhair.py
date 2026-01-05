@@ -438,14 +438,14 @@ def get_products_data() -> List[Dict]:
             "name": "Luxury Hair Oil Blend",
             "description": "Premium blend of 7 exotic oils for ultimate luxury. Our signature formula combines argan, jojoba, coconut, rosemary, lavender, and more for complete hair transformation.",
             "base_price": 89.99,
-            "images": ["https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
+            "images": ["https://images.unsplash.com/photo-1556228578-8c89e6adf883?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"],
             "attributes": {
                 "category": "oils",
                 "type": "blend",
                 "organic": "true",
                 "badge": "Premium",
                 "hair_type": "Dry, Damaged Hair",
-                "ingredients": "Argan Oil, Jojoba Oil, Coconut Oil, Rosemary Oil",
+                "ingredients": "Argan Oil, Jojoba Oil, Coconut Oil, Rosemary Oil, Lavender Oil, Sweet Almond Oil, Grapeseed Oil",
                 "features": "Luxury Blend,7 Oils,Premium"
             },
             "variants": [

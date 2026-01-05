@@ -4,6 +4,8 @@ services:
     image: mongo:7.0
     container_name: auth-mongodb
     restart: unless-stopped
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_DATABASE: auth_module
     volumes:

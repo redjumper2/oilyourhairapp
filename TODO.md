@@ -1,5 +1,25 @@
 # OilYourHair App - TODO List
 
+## Integration Testing - Reviews (Priority 1)
+
+**Status:** In Progress
+
+- [x] **Add review creation tests to test-integration.sh**
+  - Create test product for reviews
+  - Test review creation via admin API
+  - Test listing reviews via public API
+  - Test filtering by product_id
+  - Test filtering by min_rating
+  - Create multiple reviews
+  - Verify review counts
+
+- [ ] **Run integration tests and verify**
+  - Execute `./test-integration.sh`
+  - Verify all 24 tests pass
+  - Check JSON responses in logs
+
+---
+
 ## Multi-Currency Support Implementation
 
 ### Backend Tasks
