@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Checkout - OilYourHair</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkout-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .order-summary {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .checkout-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color, #2E7D32);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color-light, #4CAF50);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        #payment-element {
+            margin: 1rem 0;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .order-item-info {
+            flex: 1;
+        }
+
+        .order-item-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .order-item-quantity {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .order-item-price {
+            font-weight: 600;
+            color: var(--primary-color, #2E7D32);
+        }
+
+        .order-totals {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #eee;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-row.grand-total {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary-color, #2E7D32);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--primary-color, #2E7D32), var(--primary-color-light, #4CAF50));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #ffebee;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .empty-cart h2 {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .back-to-shop {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color, #2E7D32), var(--primary-color-light, #4CAF50));
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color-light, #4CAF50);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation and Auth -->
+    <script src="branding.js"></script>
+    <script src="auth.js"></script>
+    <script src="navigation.js"></script>
+
+    <div class="checkout-container" id="checkoutContainer">
+        <div class="checkout-form">
+            <h1 class="checkout-title">Checkout</h1>
+
+            <form id="checkoutForm">
+                <!-- Customer Information -->
+                <div class="form-section">
+                    <h3>Contact Information</h3>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="form-section">
+                    <h3>Shipping Address</h3>
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address1">Address Line 1 *</label>
+                        <input type="text" id="address1" name="address1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address2">Address Line 2</label>
+                        <input type="text" id="address2" name="address2">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State *</label>
+                            <input type="text" id="state" name="state" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postalCode">Postal Code *</label>
+                            <input type="text" id="postalCode" name="postalCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country *</label>
+                            <input type="text" id="country" name="country" value="USA" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div class="form-section">
+                    <h3>Payment Information</h3>
+                    <div id="payment-element"></div>
+                    <div class="error-message" id="payment-error"></div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Complete Order
+                </button>
+                <div class="error-message" id="error-message"></div>
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div id="orderItems"></div>
+            <div class="order-totals">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Shipping:</span>
+                    <span id="shipping">Free</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax:</span>
+                    <span id="tax">$0.00</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>Total:</span>
+                    <span id="total">$0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="cart.js"></script>
+    <script>
+        // Load configuration
+        let config;
+        let stripe;
+        let elements;
+        let paymentElement;
+        let clientSecret;
+
+        // Wait for auth to initialize, then load config and init checkout
+        async function init() {
+            try {
+                // Wait for auth initialization to complete
+                if (typeof initAuth === 'function') {
+                    await initAuth();
+                }
+
+                // Load config
+                const res = await fetch('config.json');
+                config = await res.json();
+                stripe = Stripe(config.stripe.publishable_key);
+
+                // Check if cart is empty and initialize checkout
+                if (cart.length === 0) {
+                    showEmptyCart();
+                } else {
+                    await initCheckout();
+                }
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                showError('Failed to load configuration: ' + error.message);
+            }
+        }
+
+        // Start initialization
+        init();
+
+        function showEmptyCart() {
+            document.getElementById('checkoutContainer').innerHTML = `
+                <div class="empty-cart">
+                    <h2>Your cart is empty</h2>
+                    <p>Add some amazing hair oils before checking out!</p>
+                    <a href="shop.html" class="back-to-shop">Continue Shopping</a>
+                </div>
+            `;
+        }
+
+        async function initCheckout() {
+            // Prepopulate email from logged-in user
+            if (typeof getCurrentUser === 'function') {
+                const user = getCurrentUser();
+                if (user && user.email) {
+                    document.getElementById('email').value = user.email;
+                    if (user.name) {
+                        document.getElementById('fullName').value = user.name;
+                    }
+                }
+            }
+
+            // Render order summary
+            renderOrderSummary();
+
+            // Create order and get payment intent
+            try {
+                console.log('Creating order...');
+                const order = await createOrder();
+                console.log('Order created:', order);
+
+                if (!order || !order.payment || !order.payment.client_secret) {
+                    throw new Error('Invalid order response: missing payment client_secret');
+                }
+
+                clientSecret = order.payment.client_secret;
+                console.log('Client secret received, initializing Stripe Elements...');
+
+                // Initialize Stripe Elements
+                elements = stripe.elements({ clientSecret });
+                paymentElement = elements.create('payment');
+                paymentElement.mount('#payment-element');
+                console.log('Stripe Elements mounted successfully');
+            } catch (error) {
+                console.error('Error initializing checkout:', error);
+                showError('Failed to initialize checkout: ' + error.message);
+            }
+        }
+
+        function renderOrderSummary() {
+            const orderItemsEl = document.getElementById('orderItems');
+            const subtotal = cart.reduce((sum, item) => {
+                const price = item.finalPrice || item.price || 0;
+                return sum + (price * item.quantity);
+            }, 0);
+
+            orderItemsEl.innerHTML = cart.map(item => {
+                const price = item.finalPrice || item.price || 0;
+                return `
+                    <div class="order-item">
+                        <img src="${item.image || 'https://via.placeholder.com/80'}" alt="${item.name}">
+                        <div class="order-item-info">
+                            <div class="order-item-name">${item.name}</div>
+                            <div class="order-item-quantity">Quantity: ${item.quantity}</div>
+                        </div>
+                        <div class="order-item-price">$${(price * item.quantity).toFixed(2)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${subtotal.toFixed(2)}`;
+        }
+
+        async function createOrder() {
+            const ordersEndpoint = config.api.orders_endpoint !== undefined ? config.api.orders_endpoint : 'http://localhost:9092';
+            const response = await fetch(`${ordersEndpoint}/api/v1/orders`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Host': 'oilyourhair.com'
+                },
+                body: JSON.stringify({
+                    customer: {
+                        email: document.getElementById('email').value || 'guest@example.com',
+                        name: 'Guest User' // Will be updated on form submit
+                    },
+                    items: cart.map(item => ({
+                        product_id: item.id,
+                        variant_id: item.variantId || '',
+                        name: item.name,
+                        image: item.image,
+                        unit_price: item.finalPrice || item.price || 0,
+                        quantity: item.quantity
+                    })),
+                    shipping_address: {
+                        name: 'Guest User',
+                        line1: 'TBD',
+                        city: 'TBD',
+                        state: 'TBD',
+                        postal_code: 'TBD',
+                        country: 'USA'
+                    },
+                    billing_address: {
+                        name: 'Guest User',
+                        line1: 'TBD',
+                        city: 'TBD',
+                        state: 'TBD',
+                        postal_code: 'TBD',
+                        country: 'USA'
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Order creation failed:', response.status, errorText);
+                throw new Error(`Failed to create order (${response.status}): ${errorText}`);
+            }
+
+            return await response.json();
+        }
+
+        // Handle form submission
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
+
+            try {
+                // Confirm payment with Stripe
+                const { error, paymentIntent } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/order-confirmation.html',
+                        payment_method_data: {
+                            billing_details: {
+                                name: document.getElementById('fullName').value,
+                                email: document.getElementById('email').value,
+                                phone: document.getElementById('phone').value,
+                                address: {
+                                    line1: document.getElementById('address1').value,
+                                    line2: document.getElementById('address2').value,
+                                    city: document.getElementById('city').value,
+                                    state: document.getElementById('state').value,
+                                    postal_code: document.getElementById('postalCode').value,
+                                    country: 'US'
+                                }
+                            }
+                        }
+                    },
+                    redirect: 'if_required'
+                });
+
+                if (error) {
+                    showError(error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Complete Order';
+                } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+                    // Payment succeeded! Clear cart and redirect
+                    localStorage.removeItem('shopping_cart');
+                    window.location.href = 'order-confirmation.html?payment_intent=' + paymentIntent.id;
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                showError('Payment failed. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Complete Order';
+            }
+        });
+
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 5000);
+        }
+    </script>
+</body>
+</html>

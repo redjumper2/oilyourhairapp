@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - OilYourHair</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .order-details-container {
+            max-width: 800px;
+            margin: 120px auto 40px;
+            padding: 0 1rem;
+        }
+
+        .order-details-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .order-date {
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .order-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .order-status.pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .order-status.paid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .order-status.shipped {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .order-status.delivered {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            color: #333;
+        }
+
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .order-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-quantity {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: var(--primary-color, #2E7D32);
+        }
+
+        .order-summary {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-top: 2px solid #eee;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .address-box {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .address-box h4 {
+            margin: 0 0 0.5rem;
+            color: #333;
+        }
+
+        .address-box p {
+            margin: 0.25rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color, #2E7D32);
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color, #2E7D32);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: #d32f2f;
+        }
+
+        @media (max-width: 600px) {
+            .order-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .address-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-overlay"></div>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">OilYourHair</a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-section">
+                <button class="auth-login-btn" onclick="login()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Sign In</span>
+                </button>
+                <div class="auth-user-info">
+                    <div class="user-initials"></div>
+                    <span class="user-email-display"></span>
+                    <button class="auth-logout-btn" onclick="logout()" title="Log out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <script src="branding.js"></script>
+    <script src="auth.js"></script>
+    <script src="navigation.js"></script>
+
+    <div class="order-details-container">
+        <a href="orders.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Orders
+        </a>
+
+        <div class="order-details-card" id="orderDetails">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading order details...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let config;
+
+        async function init() {
+            try {
+                const res = await fetch('config.json');
+                config = await res.json();
+                await loadOrderDetails();
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to load order details');
+            }
+        }
+
+        async function loadOrderDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderNumber = urlParams.get('id');
+
+            if (!orderNumber) {
+                showError('No order ID provided');
+                return;
+            }
+
+            try {
+                const ordersEndpoint = config.api.orders_endpoint || '';
+                const response = await fetch(`${ordersEndpoint}/api/v1/orders`);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
+                }
+
+                const data = await response.json();
+                const orders = data.orders || [];
+                const order = orders.find(o => o.order_number === orderNumber);
+
+                if (!order) {
+                    showError('Order not found');
+                    return;
+                }
+
+                renderOrderDetails(order);
+            } catch (error) {
+                console.error('Error loading order:', error);
+                showError('Failed to load order details');
+            }
+        }
+
+        function renderOrderDetails(order) {
+            const container = document.getElementById('orderDetails');
+            const date = new Date(order.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const statusClass = order.status.toLowerCase();
+            const statusText = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+
+            container.innerHTML = `
+                <div class="order-header">
+                    <div>
+                        <div class="order-number">${order.order_number}</div>
+                        <div class="order-date">Placed on ${date}</div>
+                    </div>
+                    <div class="order-status ${statusClass}">${statusText}</div>
+                </div>
+
+                <div class="section-title">Items</div>
+                <div class="order-items">
+                    ${order.items.map(item => `
+                        <div class="order-item">
+                            <img src="${item.product_image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Crect fill=%22%23f0f0f0%22 width=%2280%22 height=%2280%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Arial%22 font-size=%2210%22 fill=%22%23999%22 text-anchor=%22middle%22 dy=%22.3em%22%3ENo Image%3C/text%3E%3C/svg%3E'}" alt="${item.product_name || 'Product'}">
+                            <div class="item-info">
+                                <div class="item-name">${item.product_name || 'Product'}</div>
+                                <div class="item-quantity">Quantity: ${item.quantity}</div>
+                            </div>
+                            <div class="item-price">$${(item.unit_price * item.quantity).toFixed(2)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>$${order.subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>$${order.shipping.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tax</span>
+                        <span>$${order.tax.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span>$${order.total.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="section-title">Shipping Address</div>
+                <div class="address-grid">
+                    <div class="address-box">
+                        <h4>Ship To</h4>
+                        <p>${order.shipping_address.name || 'N/A'}</p>
+                        <p>${order.shipping_address.address_line1 || ''}</p>
+                        ${order.shipping_address.address_line2 ? `<p>${order.shipping_address.address_line2}</p>` : ''}
+                        <p>${order.shipping_address.city}, ${order.shipping_address.state} ${order.shipping_address.postal_code}</p>
+                        <p>${order.shipping_address.country}</p>
+                    </div>
+                    <div class="address-box">
+                        <h4>Bill To</h4>
+                        <p>${order.billing_address.name || 'N/A'}</p>
+                        <p>${order.billing_address.address_line1 || ''}</p>
+                        ${order.billing_address.address_line2 ? `<p>${order.billing_address.address_line2}</p>` : ''}
+                        <p>${order.billing_address.city}, ${order.billing_address.state} ${order.billing_address.postal_code}</p>
+                        <p>${order.billing_address.country}</p>
+                    </div>
+                </div>
+
+                <div class="section-title">Payment</div>
+                <div class="address-box">
+                    <p><strong>Status:</strong> ${order.payment.status}</p>
+                    <p><strong>Provider:</strong> ${order.payment.provider}</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.getElementById('orderDetails').innerHTML = `
+                <div class="error-message">
+                    <p>${message}</p>
+                    <a href="orders.html" class="back-link">Back to Orders</a>
+                </div>
+            `;
+        }
+
+        init();
+    </script>
+</body>
+</html>

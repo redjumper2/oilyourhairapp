@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - OilYourHair</title>
-    <link rel="stylesheet" href="styles.css?v=1767512141">
+    <link rel="stylesheet" href="styles.css?v=1767511987">
     <style>
         /* Common styles (header, nav, banner, etc.) are in styles.css */
         /* Shop-specific styles below */
@@ -1297,7 +1297,11 @@
         }
 
         function checkout() {
-            alert('Redirecting to checkout...');
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            window.location.href = 'checkout-debug.html';
         }
 
         // Initialize after DOM is ready
@@ -1313,12 +1317,12 @@
     </script>
 
     <!-- Branding System -->
-    <script src="cart.js?v=1767512141"></script>
-    <script src="branding.js?v=1767512141"></script>
+    <script src="cart.js?v=1767511987"></script>
+    <script src="branding.js?v=1767511987"></script>
     <!-- Promotion Banner -->
-    <script src="banner.js?v=1767512141"></script>
+    <script src="banner.js?v=1767511987"></script>
     <!-- Auth Module Integration -->
-    <script src="auth.js?v=1767512141"></script>
-    <script src="navigation.js?v=1767512141"></script>
+    <script src="auth.js?v=1767511987"></script>
+    <script src="navigation.js?v=1767595106634206275"></script>
 </body>
 </html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Orders | OilYourHair</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 120px auto 40px;
+            padding: 0 1rem;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .admin-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color, #2E7D32);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .orders-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .orders-table th {
+            background: #f9f9f9;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .orders-table tr:hover {
+            background: #fafafa;
+        }
+
+        .order-number {
+            font-weight: 600;
+            color: var(--primary-color, #2E7D32);
+        }
+
+        .customer-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .customer-name {
+            font-weight: 500;
+        }
+
+        .customer-email {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .order-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .order-status.pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .order-status.paid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .order-status.processing {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .order-status.shipped {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .order-status.delivered {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .order-status.cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-select {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: var(--primary-color, #2E7D32);
+        }
+
+        .order-total {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .view-btn {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color, #2E7D32);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view-btn:hover {
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color, #2E7D32);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .items-preview {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .address-preview {
+            font-size: 0.85rem;
+            color: #666;
+            max-width: 200px;
+        }
+
+        /* Modal for order details */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-section h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color, #2E7D32);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            padding: 0.75rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .order-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .order-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .order-item-info {
+            flex: 1;
+        }
+
+        .order-item-name {
+            font-weight: 500;
+        }
+
+        .order-item-qty {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .order-item-price {
+            font-weight: 600;
+        }
+
+        @media (max-width: 1000px) {
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .admin-stats {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-overlay"></div>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">OilYourHair</a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="reviews.html">Reviews</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="auth-section">
+                <button class="auth-login-btn" onclick="login()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Sign In</span>
+                </button>
+                <div class="auth-user-info">
+                    <div class="user-initials"></div>
+                    <span class="user-email-display"></span>
+                    <button class="auth-logout-btn" onclick="logout()" title="Log out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <script src="branding.js"></script>
+    <script src="auth.js"></script>
+    <script src="navigation.js"></script>
+
+    <!-- Unauthorized message (hidden by default) -->
+    <div class="admin-container" id="unauthorizedContainer" style="display: none;">
+        <div class="orders-table-container" style="text-align: center; padding: 3rem;">
+            <h2 style="color: #d32f2f; margin-bottom: 1rem;">Access Denied</h2>
+            <p style="color: #666; margin-bottom: 2rem;">You must be logged in as an administrator to view this page.</p>
+            <button onclick="login()" style="padding: 0.75rem 2rem; background: var(--primary-color, #2E7D32); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;">Sign In</button>
+        </div>
+    </div>
+
+    <div class="admin-container" id="adminContainer" style="display: none;">
+        <div class="admin-header">
+            <h1 class="admin-title">Order Management</h1>
+            <div class="admin-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="totalOrders">-</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="pendingOrders">-</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="totalRevenue">-</div>
+                    <div class="stat-label">Revenue</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="orders-table-container">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <tr>
+                        <td colspan="7">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                <p>Loading orders...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalOrderNumber">Order Details</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let config;
+        let allOrders = [];
+
+        async function init() {
+            try {
+                // Wait for auth initialization
+                if (typeof initAuth === 'function') {
+                    await initAuth();
+                }
+
+                // Load config
+                const res = await fetch('config.json');
+                config = await res.json();
+
+                // Check if user is admin
+                const user = getCurrentUser();
+                const adminEmails = config.admin_emails || [];
+
+                if (!user || !adminEmails.includes(user.email)) {
+                    // Not authorized - show unauthorized message
+                    document.getElementById('unauthorizedContainer').style.display = 'block';
+                    document.getElementById('adminContainer').style.display = 'none';
+                    return;
+                }
+
+                // User is admin - show admin panel
+                document.getElementById('unauthorizedContainer').style.display = 'none';
+                document.getElementById('adminContainer').style.display = 'block';
+
+                await loadOrders();
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to load configuration');
+            }
+        }
+
+        async function loadOrders() {
+            try {
+                const ordersEndpoint = config.api.orders_endpoint || '';
+                const response = await fetch(`${ordersEndpoint}/api/v1/admin/orders`);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
+                }
+
+                const data = await response.json();
+                allOrders = data.orders || [];
+
+                updateStats();
+                renderOrders();
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('ordersTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <p>Failed to load orders. Please try again.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalOrders').textContent = allOrders.length;
+
+            const pending = allOrders.filter(o => o.status === 'pending').length;
+            document.getElementById('pendingOrders').textContent = pending;
+
+            const revenue = allOrders
+                .filter(o => o.status !== 'cancelled')
+                .reduce((sum, o) => sum + (o.total || 0), 0);
+            document.getElementById('totalRevenue').textContent = '$' + revenue.toFixed(2);
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('ordersTableBody');
+
+            if (allOrders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <p>No orders found.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = allOrders.map(order => {
+                const date = new Date(order.created_at).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const itemsCount = order.items ? order.items.length : 0;
+                const itemsPreview = order.items && order.items[0]
+                    ? `${order.items[0].product_name || 'Product'}${itemsCount > 1 ? ` +${itemsCount - 1} more` : ''}`
+                    : 'No items';
+
+                return `
+                    <tr>
+                        <td>
+                            <span class="order-number">${order.order_number}</span>
+                        </td>
+                        <td>
+                            <div class="customer-info">
+                                <span class="customer-name">${order.customer?.name || 'Guest'}</span>
+                                <span class="customer-email">${order.customer?.email || 'N/A'}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="items-preview">${itemsPreview}</span>
+                        </td>
+                        <td>
+                            <span class="order-total">$${(order.total || 0).toFixed(2)}</span>
+                        </td>
+                        <td>
+                            <select class="status-select" onchange="updateStatus('${order.id}', this.value)">
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="paid" ${order.status === 'paid' ? 'selected' : ''}>Paid</option>
+                                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                        </td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="view-btn" onclick="viewOrder('${order.id}')">View</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function updateStatus(orderId, newStatus) {
+            try {
+                const ordersEndpoint = config.api.orders_endpoint || '';
+                const response = await fetch(`${ordersEndpoint}/api/v1/admin/orders/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update status');
+                }
+
+                // Update local data
+                const order = allOrders.find(o => o.id === orderId);
+                if (order) {
+                    order.status = newStatus;
+                    updateStats();
+                }
+
+                console.log(`Order ${orderId} status updated to ${newStatus}`);
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Failed to update order status. Please try again.');
+                // Reload to reset
+                await loadOrders();
+            }
+        }
+
+        function viewOrder(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById('modalOrderNumber').textContent = order.order_number;
+
+            const date = new Date(order.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            const itemsHtml = order.items ? order.items.map(item => `
+                <div class="order-item">
+                    <img src="${item.product_image || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22%3E%3Crect fill=%22%23f0f0f0%22 width=%2260%22 height=%2260%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Arial%22 font-size=%228%22 fill=%22%23999%22 text-anchor=%22middle%22 dy=%22.3em%22%3ENo Image%3C/text%3E%3C/svg%3E'}" alt="${item.product_name || 'Product'}">
+                    <div class="order-item-info">
+                        <div class="order-item-name">${item.product_name || 'Product'}</div>
+                        <div class="order-item-qty">Qty: ${item.quantity} @ $${(item.unit_price || 0).toFixed(2)}</div>
+                    </div>
+                    <div class="order-item-price">$${((item.unit_price || 0) * item.quantity).toFixed(2)}</div>
+                </div>
+            `).join('') : '<p>No items</p>';
+
+            const shippingAddr = order.shipping_address || {};
+            const billingAddr = order.billing_address || {};
+
+            document.getElementById('modalContent').innerHTML = `
+                <div class="detail-section">
+                    <h4>Order Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Date</div>
+                            <div class="detail-value">${date}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value"><span class="order-status ${order.status}">${order.status}</span></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Payment Status</div>
+                            <div class="detail-value">${order.payment?.status || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Payment ID</div>
+                            <div class="detail-value" style="font-size: 0.8rem; word-break: break-all;">${order.payment?.payment_intent_id || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Customer</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Name</div>
+                            <div class="detail-value">${order.customer?.name || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">${order.customer?.email || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Shipping Address</h4>
+                    <div class="detail-item">
+                        <div class="detail-value">
+                            ${shippingAddr.name || 'N/A'}<br>
+                            ${shippingAddr.address_line1 || ''}${shippingAddr.address_line2 ? '<br>' + shippingAddr.address_line2 : ''}<br>
+                            ${shippingAddr.city || ''}, ${shippingAddr.state || ''} ${shippingAddr.postal_code || ''}<br>
+                            ${shippingAddr.country || ''}
+                            ${shippingAddr.phone ? '<br>Phone: ' + shippingAddr.phone : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Items</h4>
+                    <div class="order-items-list">
+                        ${itemsHtml}
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Order Total</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Subtotal</div>
+                            <div class="detail-value">$${(order.subtotal || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Shipping</div>
+                            <div class="detail-value">$${(order.shipping || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Tax</div>
+                            <div class="detail-value">$${(order.tax || 0).toFixed(2)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total</div>
+                            <div class="detail-value" style="font-weight: bold; font-size: 1.2rem;">$${(order.total || 0).toFixed(2)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('orderModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').classList.remove('show');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('orderModal').addEventListener('click', (e) => {
+            if (e.target.id === 'orderModal') {
+                closeModal();
+            }
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        function showError(message) {
+            document.getElementById('ordersTableBody').innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <p>${message}</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        init();
+    </script>
+</body>
+</html>

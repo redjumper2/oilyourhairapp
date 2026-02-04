@@ -145,6 +145,37 @@ services:
     networks:
       - auth-network
 
+  # Orders Module API
+  orders-api:
+    build:
+      context: ./orders_module
+      dockerfile: Dockerfile
+    container_name: orders-api
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+    environment:
+      ORDERS_SERVER_PORT: "9092"
+      ORDERS_SERVER_HOST: "0.0.0.0"
+      ORDERS_SERVER_ENV: "development"
+      ORDERS_MONGODB_URI: "mongodb://mongodb:27017"
+      ORDERS_MONGODB_DATABASE: "orders_module"
+      ORDERS_JWT_SECRET: "dev-secret-change-in-production-12345678901234567890"
+      ORDERS_STRIPE_SECRET_KEY: "${STRIPE_SECRET_KEY:-sk_test_...}"
+      ORDERS_STRIPE_WEBHOOK_SECRET: "${STRIPE_WEBHOOK_SECRET:-whsec_...}"
+      ORDERS_PRODUCTS_API_URL: "http://products-api:9091"
+      ORDERS_AUTH_API_URL: "http://auth-api:9090"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - auth-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9092/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
 volumes:
   mongodb_data:
     driver: local

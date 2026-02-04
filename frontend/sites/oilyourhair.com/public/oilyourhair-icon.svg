@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Oil Dropper Icon -->
+  <g transform="translate(50, 20)">
+    <!-- Dropper bulb -->
+    <ellipse cx="50" cy="30" rx="25" ry="20" fill="#4CAF50" opacity="0.8"/>
+    <ellipse cx="50" cy="28" rx="20" ry="15" fill="#66BB6A" opacity="0.6"/>
+
+    <!-- Dropper tube -->
+    <rect x="47" y="45" width="6" height="80" fill="#2E7D32" rx="3"/>
+
+    <!-- Dropper tip -->
+    <path d="M 50 125 L 45 135 L 50 145 L 55 135 Z" fill="#1B5E20"/>
+
+    <!-- Oil drop -->
+    <ellipse cx="50" cy="155" rx="8" ry="10" fill="#FFB74D" opacity="0.9">
+      <animate attributeName="cy" values="155;165;155" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.9;0.3;0.9" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+
+  <!-- Text -->
+  <text x="100" y="190" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#2E7D32" text-anchor="middle">OilYourHair</text>
+</svg>

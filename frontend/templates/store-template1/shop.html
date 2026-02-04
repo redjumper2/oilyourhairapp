@@ -1297,7 +1297,11 @@
         }
 
         function checkout() {
-            alert('Redirecting to checkout...');
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            window.location.href = 'checkout.html';
         }
 
         // Initialize after DOM is ready

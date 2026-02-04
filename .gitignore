@@ -50,6 +50,15 @@ coverage/
 cleanup*
 cleanup*/
 
+# === Stripe / Credentials docs ===
+GET_STRIPE_KEY.md
+STRIPE_CREDENTIALS.md
+STRIPE_QUICK_REFERENCE.txt
+STRIPE_SETUP.md
+CHECKOUT_TEST_RESULTS.md
+CHECKOUT_IMPLEMENTATION_SUMMARY.md
+README_CHECKOUT.md
+
 # === Python / Setup Scripts ===
 # Virtual environments
 setupdomain/*/venv/

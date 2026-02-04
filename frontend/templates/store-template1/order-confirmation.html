@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - OilYourHair</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: #f5f5f5;
+        }
+
+        .confirmation-container {
+            max-width: 800px;
+            margin: 100px auto 40px;
+            padding: 0 2rem;
+        }
+
+        .confirmation-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(45deg, var(--primary-color, #2E7D32), var(--primary-color-light, #4CAF50));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+
+        .confirmation-title {
+            font-size: 2.5rem;
+            color: var(--primary-color, #2E7D32);
+            margin-bottom: 1rem;
+        }
+
+        .confirmation-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .order-details {
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .order-details h3 {
+            color: var(--primary-color, #2E7D32);
+            margin-bottom: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color, #2E7D32), var(--primary-color-light, #4CAF50));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color, #2E7D32);
+            border: 2px solid var(--primary-color, #2E7D32);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color-light, #4CAF50);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .email-notification {
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 2rem;
+            color: var(--primary-color, #2E7D32);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <script src="branding.js"></script>
+    <script src="navigation.js"></script>
+
+    <div class="confirmation-container">
+        <div class="confirmation-card" id="confirmationCard">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Confirming your order...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadOrderConfirmation() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentIntentId = urlParams.get('payment_intent');
+            const paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
+
+            if (!paymentIntentId && !paymentIntentClientSecret) {
+                showError('No order information found');
+                return;
+            }
+
+            try {
+                // For MVP, we'll show a generic success message
+                // In production, you'd fetch order details from the API
+                showSuccess(paymentIntentId);
+            } catch (error) {
+                console.error('Error loading order confirmation:', error);
+                showError('Failed to load order details');
+            }
+        }
+
+        function showSuccess(paymentIntentId) {
+            const confirmationCard = document.getElementById('confirmationCard');
+            confirmationCard.innerHTML = `
+                <div class="success-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                    </svg>
+                </div>
+                <h1 class="confirmation-title">Order Confirmed!</h1>
+                <p class="confirmation-message">
+                    Thank you for your purchase! Your order has been successfully placed.
+                </p>
+
+                <div class="order-details">
+                    <h3>Order Details</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Payment ID:</span>
+                        <span class="detail-value">${paymentIntentId || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value">Processing</span>
+                    </div>
+                </div>
+
+                <div class="email-notification">
+                    <strong>📧 Check your email!</strong><br>
+                    We've sent a confirmation email with your order details and tracking information.
+                </div>
+
+                <div class="action-buttons">
+                    <a href="shop.html" class="btn btn-primary">Continue Shopping</a>
+                    <a href="index.html" class="btn btn-secondary">Back to Home</a>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const confirmationCard = document.getElementById('confirmationCard');
+            confirmationCard.innerHTML = `
+                <div class="success-icon" style="background: #d32f2f;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                    </svg>
+                </div>
+                <h1 class="confirmation-title" style="color: #d32f2f;">Error</h1>
+                <p class="confirmation-message">${message}</p>
+                <div class="action-buttons">
+                    <a href="shop.html" class="btn btn-primary">Back to Shop</a>
+                </div>
+            `;
+        }
+
+        // Load confirmation when page loads
+        loadOrderConfirmation();
+    </script>
+</body>
+</html>

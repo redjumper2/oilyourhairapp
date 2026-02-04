@@ -102,6 +102,11 @@ function logout() {
     window.location.reload();
 }
 
+// Get current user
+function getCurrentUser() {
+    return currentUser;
+}
+
 // Check if user has a specific permission
 function hasPermission(permission) {
     if (!currentUser || !currentUser.permissions) {

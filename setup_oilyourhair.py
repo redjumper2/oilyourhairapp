@@ -35,6 +35,7 @@ init(autoreset=True)
 # Configuration
 AUTH_URL = "http://localhost:8080"
 PRODUCTS_URL = "http://localhost:9091"
+ORDERS_URL = "http://localhost:9092"
 DOMAIN = "oilyourhair.com"
 DOMAIN_NAME = "Oil Your Hair"
 

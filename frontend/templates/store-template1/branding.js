@@ -42,36 +42,44 @@ class BrandingManager {
     }
 
     applyColors() {
-        if (!this.config) {
-            console.warn('No config found, using defaults');
-            return;
+        try {
+            if (!this.config) {
+                console.warn('No config found, using defaults');
+                return;
+            }
+
+            const root = document.documentElement;
+
+            // Support both nested (colors.primary) and flat (primaryColor) structure
+            const primaryColor = (this.config.colors?.primary) || this.config.primaryColor || '#2E7D32';
+            const primaryLight = (this.config.colors?.primary_light) || this.config.primaryColorLight || '#4CAF50';
+            const primaryDark = (this.config.colors?.primary_dark) || this.config.primaryColorDark || '#1B5E20';
+
+            // Set CSS custom properties for colors
+            if (primaryColor) root.style.setProperty('--brand-primary', primaryColor);
+            if (primaryDark) root.style.setProperty('--brand-primary-dark', primaryDark);
+            if (primaryLight) root.style.setProperty('--brand-primary-light', primaryLight);
+
+            // For checkout page compatibility
+            root.style.setProperty('--primary-color', primaryColor);
+            root.style.setProperty('--primary-color-light', primaryLight);
+
+            // Optional colors with defaults
+            const secondary = this.config.colors?.secondary || this.config.secondaryColor || primaryColor;
+            const accent = this.config.colors?.accent || this.config.accentColor || primaryLight;
+
+            if (secondary) root.style.setProperty('--brand-secondary', secondary);
+            if (accent) root.style.setProperty('--brand-accent', accent);
+            if (this.config.colors?.background) root.style.setProperty('--brand-background', this.config.colors.background);
+            if (this.config.colors?.text) root.style.setProperty('--brand-text', this.config.colors.text);
+            if (this.config.colors?.text_light) root.style.setProperty('--brand-text-light', this.config.colors.text_light);
+            if (this.config.colors?.border) root.style.setProperty('--brand-border', this.config.colors.border);
+            if (this.config.colors?.success) root.style.setProperty('--brand-success', this.config.colors.success);
+            if (this.config.colors?.error) root.style.setProperty('--brand-error', this.config.colors.error);
+            if (this.config.colors?.warning) root.style.setProperty('--brand-warning', this.config.colors.warning);
+        } catch (error) {
+            console.warn('Error applying colors, using defaults:', error);
         }
-
-        const root = document.documentElement;
-
-        // Support both nested (colors.primary) and flat (primaryColor) structure
-        const primaryColor = this.config.colors?.primary || this.config.primaryColor;
-        const primaryLight = this.config.colors?.primary_light || this.config.primaryColorLight;
-        const primaryDark = this.config.colors?.primary_dark || this.config.primaryColorDark;
-
-        // Set CSS custom properties for colors
-        if (primaryColor) root.style.setProperty('--brand-primary', primaryColor);
-        if (primaryDark) root.style.setProperty('--brand-primary-dark', primaryDark);
-        if (primaryLight) root.style.setProperty('--brand-primary-light', primaryLight);
-
-        // Optional colors with defaults
-        const secondary = this.config.colors?.secondary || this.config.secondaryColor || primaryColor;
-        const accent = this.config.colors?.accent || this.config.accentColor || primaryLight;
-
-        if (secondary) root.style.setProperty('--brand-secondary', secondary);
-        if (accent) root.style.setProperty('--brand-accent', accent);
-        if (this.config.colors?.background) root.style.setProperty('--brand-background', this.config.colors.background);
-        if (this.config.colors?.text) root.style.setProperty('--brand-text', this.config.colors.text);
-        if (this.config.colors?.text_light) root.style.setProperty('--brand-text-light', this.config.colors.text_light);
-        if (this.config.colors?.border) root.style.setProperty('--brand-border', this.config.colors.border);
-        if (this.config.colors?.success) root.style.setProperty('--brand-success', this.config.colors.success);
-        if (this.config.colors?.error) root.style.setProperty('--brand-error', this.config.colors.error);
-        if (this.config.colors?.warning) root.style.setProperty('--brand-warning', this.config.colors.warning);
     }
 
     applyTypography() {

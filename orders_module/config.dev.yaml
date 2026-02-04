@@ -1,0 +1,22 @@
+server:
+  port: "9092"
+  host: "0.0.0.0"
+  env: "development"
+
+mongodb:
+  uri: "mongodb://localhost:27017"
+  database: "orders_module"
+
+jwt:
+  secret: "dev-secret-change-in-production-12345678901234567890"
+
+stripe:
+  secret_key: "sk_test_..." # Add your Stripe test secret key
+  webhook_secret: "whsec_..." # Add your Stripe webhook secret
+  publishable_key: "pk_test_..." # For reference (used in frontend)
+
+products_api:
+  url: "http://localhost:9091"
+
+auth_api:
+  url: "http://localhost:9090"
